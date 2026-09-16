@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>每日英语打卡 · 配偶签冲刺</title>
+<style>
+  :root{
+    --bg:#f5f7fa;--card:#fff;--ink:#1f2937;--sub:#6b7280;
+    --brand:#2563eb;--ok:#16a34a;--warn:#f59e0b;--line:#e5e7eb;--chip:#eef2ff;
+    --danger:#b91c1c;--dangerbg:#fef2f2;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;padding:12px;max-width:560px;margin:0 auto}
+  h1{font-size:19px;margin:0}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .sub{color:var(--sub);font-size:12px}
+  .streak{font-size:13px;font-weight:700;color:var(--warn)}
+  .bar{height:10px;background:#e5e7eb;border-radius:999px;overflow:hidden;margin:6px 0}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#0ea5e9);width:0%}
+  .tabs{display:flex;gap:6px;margin:10px 0}
+  .tab{flex:1;text-align:center;padding:9px 4px;border-radius:10px;background:#fff;border:1px solid var(--line);
+    font-size:13px;font-weight:700;color:var(--sub);cursor:pointer}
+  .tab.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:999px;background:var(--chip);color:var(--brand);font-weight:700}
+  .tag.shop{background:#fef3c7;color:#b45309}.tag.life{background:#dcfce7;color:#15803d}.tag.visa{background:#fee2e2;color:#b91c1c}
+  .big{font-size:22px;font-weight:800;margin:6px 0 2px}
+  .muted{color:var(--sub);font-size:12.5px}
+  .line{display:flex;gap:6px;align-items:flex-start;margin:8px 0}
+  .who{flex:0 0 56px;font-weight:700;color:var(--brand);font-size:12.5px;padding-top:3px}
+  .en{flex:1}
+  .en .e{font-weight:600}
+  .en .z{color:var(--sub);font-size:12.5px}
+  .spk{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;border-radius:8px;
+    background:#eef2f7;color:var(--brand);font-size:14px;cursor:pointer;margin-left:4px;vertical-align:middle;user-select:none}
+  .spk:active{background:#dbeafe}
+  .vocab{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0}
+  .v{background:#f1f5f9;border-radius:10px;padding:6px 9px;font-size:13px;display:flex;align-items:center;gap:2px}
+  .v b{color:var(--brand)}
+  .tip{background:#fffbeb;border-left:4px solid var(--warn);padding:9px 11px;border-radius:8px;font-size:13.5px;margin:9px 0}
+  .task{background:var(--chip);border-radius:10px;padding:9px 11px;font-size:13.5px;margin:9px 0}
+  .visa-word{background:var(--dangerbg);border-radius:10px;padding:9px 11px;font-size:13.5px;border:1px dashed #fca5a5}
+  .visa-word b{color:var(--danger)}
+  .mini{font-size:11.5px;color:var(--sub);margin-top:2px}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;padding:11px 14px;font-size:14.5px;font-weight:700}
+  .btn-done{background:var(--ok);color:#fff;width:100%;margin-top:8px}
+  .btn-done.done{background:#cbd5e1;color:#475569}
+  .btn-ghost{background:#eef2f7;color:var(--ink)}
+  .btn-danger{background:var(--dangerbg);color:var(--danger)}
+  .btn-sm{font-size:12px;padding:6px 9px;border-radius:8px}
+  .addm{background:#eef2f7;color:var(--brand);font-size:11px;padding:3px 7px;border-radius:7px;margin-left:6px;cursor:pointer}
+  .done-badge{font-size:11px;color:var(--ok);font-weight:700}
+  .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .list-item:last-child{border-bottom:none}
+  .list-item.grey{opacity:.45}
+  .chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#fff;cursor:pointer}
+  .chk.on{background:var(--ok);border-color:var(--ok)}
+  .mistake{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:9px}
+  .mistake .correct{font-weight:700;color:var(--ok)}
+  .mistake .wrong{color:var(--danger);font-size:13px}
+  .mistake .note{color:var(--sub);font-size:12.5px;margin-top:2px}
+  .mistake .acts{display:flex;gap:6px;margin-top:7px;flex-wrap:wrap}
+  .disclaimer{font-size:11.5px;color:var(--sub);background:#f8fafc;border-radius:10px;padding:9px 11px;margin-top:8px}
+  .mask{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;padding:16px;z-index:50}
+  .mask.on{display:flex}
+  .modal{background:#fff;border-radius:16px;padding:16px;width:100%;max-width:420px}
+  .modal h3{margin:0 0 10px;font-size:16px}
+  .modal label{font-size:13px;font-weight:700;display:block;margin:10px 0 4px}
+  .modal input,.modal textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:10px;font-size:14px;font-family:inherit}
+  .modal .row2{display:flex;gap:8px;margin-top:14px}
+  .hidden{display:none!important}
+  details{margin-top:6px}
+  summary{cursor:pointer;font-weight:700;color:var(--brand);font-size:14px}
+  .spk-on{background:#dbeafe;color:var(--brand);box-shadow:0 0 0 2px #bfdbfe}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#1f2937;color:#fff;
+    padding:9px 14px;border-radius:10px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:60;max-width:90%}
+  .toast.on{opacity:.95}
+  .hintbar{font-size:12px;color:var(--sub);text-align:center;margin:2px 0 8px}
+  .spk:active,.btn-done:active,.btn-ghost:active,.tab:active{transform:scale(.98)}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div>
+    <h1>每日英语打卡</h1>
+    <div class="sub">配偶签冲刺 · A1✅ → A2续签 → B1永居</div>
+  </div>
+  <div style="text-align:right">
+    <div class="streak" id="streak">🔥 0 天</div>
+    <div class="muted" id="today"></div>
+  </div>
+</div>
+<div class="card" style="padding:10px 14px">
+  <div class="row">
+    <span class="muted">学习进度</span>
+    <span class="muted" id="progText">0 / 30</span>
+  </div>
+  <div class="bar"><i id="progBar"></i></div>
+  <div class="muted">已学完的课程会自动跳过，不再出现在每日学习里。</div>
+</div>
+
+<div class="tabs">
+  <div class="tab on" data-tab="study">📚 学习</div>
+  <div class="tab" data-tab="mistake">📕 错题库 <span id="mCount"></span></div>
+  <div class="tab" data-tab="progress">📊 进度</div>
+</div>
+<div class="hintbar">💡 每句英文 / 单词后的 🔊 可朗读（英式发音）；点「学完这节课」自动跳过已学内容。</div>
+
+<div id="tab-study">
+  <div class="card" id="lessonCard"></div>
+  <div class="card">
+    <details>
+      <summary>🛂 配偶签英语路径（点开/收起）</summary>
+      <div style="margin-top:8px;font-size:13px">
+        <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)"><span style="width:10px;height:10px;border-radius:50%;background:var(--ok);margin-top:6px"></span><div><b>A1 生活技能（听说）</b> — 首次境外配偶签<br><span class="mini">✅ 你已通过</span></div></div>
+        <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)"><span style="width:10px;height:10px;border-radius:50%;background:var(--warn);margin-top:6px"></span><div><b>A2 生活技能（听说）</b> — 续签 FLR(M)<br><span class="mini">🔜 当前目标</span></div></div>
+        <div style="display:flex;gap:8px;padding:6px 0"><span style="width:10px;height:10px;border-radius:50%;background:var(--line);margin-top:6px"></span><div><b>B1 生活技能（听说）</b> — 永居 ILR（满5年）<br><span class="mini">🎯 长期目标</span></div></div>
+      </div>
+      <div class="disclaimer">⚠️ 非移民法律建议。除英语外，配偶签还需满足<b>关系真实性</b>与<b>财务要求</b>（通常家庭年收入 ≥ £18,600，有子女另加）。以 <a href="https://www.gov.uk/partner-visa" target="_blank" rel="noopener">gov.uk/partner-visa</a> 为准，可用「深研研」专家核对最新版。</div>
+    </details>
+  </div>
+</div>
+
+<div id="tab-mistake" class="hidden">
+  <div class="card">
+    <div class="row">
+      <b>➕ 添加我的错题</b>
+      <div>
+        <button class="btn-ghost btn-sm" id="exportBtn">导出</button>
+        <button class="btn-ghost btn-sm" id="importBtn">导入</button>
+      </div>
+    </div>
+    <div style="margin-top:8px">
+      <label style="font-size:12.5px;font-weight:700">正确表达（英文）</label>
+      <input id="mCorrect" placeholder="例如：Could you pass me the cup, please?" />
+      <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">我常错的写法 / 说法</label>
+      <input id="mWrong" placeholder="例如：Can you give me cup?" />
+      <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">备注（可选）</label>
+      <input id="mNote" placeholder="例如：pass 不是 give；加 please 更礼貌" />
+      <button class="btn-done" style="margin-top:10px" id="addMistake">保存到错题库</button>
+    </div>
+    <div class="disclaimer">💡 在学习页每句/每个词后面点「记错」可一键带入正确表达。</div>
+  </div>
+  <div id="mistakeList"></div>
+  <input type="file" id="importFile" accept="application/json" class="hidden" />
+</div>
+
+<div id="tab-progress" class="hidden">
+  <div class="card">
+    <div class="row">
+      <b>30 天课程总表</b>
+      <button class="btn-danger btn-sm" id="resetBtn">重置进度</button>
+    </div>
+    <div id="progressList" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<div class="mask" id="mask">
+  <div class="modal">
+    <h3>📕 加入错题库</h3>
+    <label>正确表达（英文）</label>
+    <input id="mmCorrect" readonly />
+    <label>我常错的写法 / 说法</label>
+    <input id="mmWrong" placeholder="我刚才说/写错的样子…" />
+    <label>备注（可选）</label>
+    <input id="mmNote" placeholder="为什么错 / 怎么记" />
+    <div class="row2">
+      <button class="btn-ghost" style="flex:1" id="mmCancel">取消</button>
+      <button class="btn-done" style="flex:1;margin-top:0" id="mmSave">保存</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============ 课程数据（30天） ============ */
+const LESSONS = [
+  {scene:"shop",title:"开门营业·打招呼",dia:[
+    {w:"你",e:"Hi there! Welcome to ALS Bubble Tea.",z:"你好！欢迎光临 ALS 奶茶。"},
+    {w:"客",e:"Hi, can I see the menu?",z:"嗨，能看一下菜单吗？"},
+    {w:"你",e:"Sure! Here you are.",z:"当然，给你。"},
+    {w:"客",e:"Thank you.",z:"谢谢。"}],
+   voc:[{w:"welcome",m:"欢迎"},{w:"menu",m:"菜单"},{w:"sure",m:"当然"},{w:"here you are",m:"给你"},{w:"thanks",m:"谢谢"}],
+   tip:"打招呼用 Hi / Hello；'Welcome to…' 是店员标准迎客语。",task:"对着镜子说三遍：'Hi there! Welcome to ALS Bubble Tea.' 录音听一遍。",visa:{w:"spouse visa",m:"配偶签证"}},
+
+  {scene:"shop",title:"点单基础·尺寸甜度温度",dia:[
+    {w:"客",e:"I'd like a milk tea, please.",z:"我要一杯奶茶。"},
+    {w:"你",e:"What size? Medium or large?",z:"什么杯型？中杯还是大杯？"},
+    {w:"客",e:"Medium, half sugar, less ice.",z:"中杯，半糖，少冰。"},
+    {w:"你",e:"Got it. Anything else?",z:"好的，还要别的吗？"}],
+   voc:[{w:"size",m:"杯型/尺寸"},{w:"medium",m:"中杯"},{w:"large",m:"大杯"},{w:"half sugar",m:"半糖"},{w:"less ice",m:"少冰"}],
+   tip:"点单三要素：size→sugar→ice。记住顺序，点单不慌。",task:"用英语自言自语点一杯：'Large, full sugar, no ice.' 换组合说 3 次。",visa:{w:"application",m:"申请"}},
+
+  {scene:"shop",title:"推荐饮品",dia:[
+    {w:"客",e:"What do you recommend?",z:"你有什么推荐？"},
+    {w:"你",e:"Our best-seller is brown sugar bubble tea.",z:"最畅销的是黑糖珍珠奶茶。"},
+    {w:"客",e:"Sounds good. I'll try it.",z:"听起来不错，我试试。"},
+    {w:"你",e:"Great choice!",z:"好选择！"}],
+   voc:[{w:"recommend",m:"推荐"},{w:"best-seller",m:"畅销款"},{w:"brown sugar",m:"黑糖"},{w:"try",m:"尝试"},{w:"choice",m:"选择"}],
+   tip:"推荐用 'Our best-seller is…' / 'I recommend…'。'Sounds good' 万能回应。",task:"背下推荐语，明天用在店里：'Our best-seller is brown sugar bubble tea.'",visa:{w:"evidence",m:"证据/材料"}},
+
+  {scene:"shop",title:"付款与找零",dia:[
+    {w:"客",e:"How much is it?",z:"多少钱？"},
+    {w:"你",e:"That's £4.50, please.",z:"一共 4.5 英镑。"},
+    {w:"客",e:"Can I pay by card?",z:"可以刷卡吗？"},
+    {w:"你",e:"Yes, tap here, please.",z:"可以，请这边刷。"}],
+   voc:[{w:"how much",m:"多少钱"},{w:"pay",m:"付款"},{w:"by card",m:"刷卡"},{w:"cash",m:"现金"},{w:"tap",m:"感应支付"}],
+   tip:"价格：£4.50 = 'four pounds fifty'。'Can I pay by…?' 问支付方式万能句。",task:"练习报价格：£3.20 / £5.80 / £6.00 各说一遍。",visa:{w:"fee",m:"费用"}},
+
+  {scene:"shop",title:"堂食还是外带",dia:[
+    {w:"你",e:"For here or to go?",z:"堂食还是带走？"},
+    {w:"客",e:"To go, please.",z:"带走，谢谢。"},
+    {w:"你",e:"Sure. It'll be ready in five minutes.",z:"好的，五分钟就好。"},
+    {w:"客",e:"No problem, thanks.",z:"没问题，谢谢。"}],
+   voc:[{w:"for here",m:"堂食"},{w:"to go",m:"外带"},{w:"ready",m:"准备好"},{w:"minute",m:"分钟"},{w:"no problem",m:"没问题"}],
+   tip:"'For here or to go?' 是饮品店最高频问句，必须烂熟。'in five minutes' = 五分钟后。",task:"把 'For here or to go?' 设成手机锁屏，今天每次点单先问这句。",visa:{w:"biometric",m:"生物信息采集"}},
+
+  {scene:"shop",title:"处理做错/投诉",dia:[
+    {w:"客",e:"Sorry, I ordered no sugar.",z:"抱歉，我点的是无糖。"},
+    {w:"你",e:"Oh, I'm so sorry. Let me remake it.",z:"真抱歉，我重做一杯。"},
+    {w:"客",e:"That's OK, take your time.",z:"没事，慢慢来。"},
+    {w:"你",e:"Thank you for your patience.",z:"谢谢你的耐心。"}],
+   voc:[{w:"sorry",m:"抱歉"},{w:"ordered",m:"点（过去式）"},{w:"remake",m:"重做"},{w:"patience",m:"耐心"},{w:"mistake",m:"错误"}],
+   tip:"出错先道歉 'I'm so sorry'，再给方案 'Let me…'。'Take your time' = 不着急。",task:"情景演练：假设做错一杯，用英语道歉并重做。",visa:{w:"relationship",m:"关系（夫妻）"}},
+
+  {scene:"life",title:"日常问候与小聊",dia:[
+    {w:"你",e:"How's your day going?",z:"今天过得怎么样？"},
+    {w:"邻",e:"Not bad, thanks. And you?",z:"还行，谢谢。你呢？"},
+    {w:"你",e:"Pretty good, just busy with the shop.",z:"挺好，就是店里忙。"},
+    {w:"邻",e:"I hear it's popular!",z:"听说你店很火！"}],
+   voc:[{w:"how's",m:"…怎么样"},{w:"not bad",m:"还不错"},{w:"pretty good",m:"挺好"},{w:"busy",m:"忙"},{w:"popular",m:"受欢迎"}],
+   tip:"小聊万能三句：'How's your day?' / 'Not bad, and you?' / 'Pretty good.'",task:"今天和一位顾客或邻居用英语聊两句近况。",visa:{w:"settlement",m:"永居/定居"}},
+
+  {scene:"life",title:"问路",dia:[
+    {w:"你",e:"Excuse me, where is the bus stop?",z:"请问公交站在哪？"},
+    {w:"路",e:"Go straight, then turn left.",z:"直走，然后左转。"},
+    {w:"你",e:"Straight and left. Got it, thanks!",z:"直走左转，懂了，谢谢！"},
+    {w:"路",e:"You're welcome.",z:"不客气。"}],
+   voc:[{w:"excuse me",m:"请问/打扰"},{w:"where is",m:"…在哪里"},{w:"straight",m:"直走"},{w:"turn left",m:"左转"},{w:"welcome",m:"不客气"}],
+   tip:"问路开头必用 'Excuse me'。方向词：straight / left / right / next to。",task:"记方向四词：straight, left, right, next to。用英语指一次路。",visa:{w:"address",m:"地址"}},
+
+  {scene:"life",title:"超市购物",dia:[
+    {w:"你",e:"Where can I find milk?",z:"牛奶在哪？"},
+    {w:"员",e:"It's on shelf 3, on your right.",z:"在3号货架，右手边。"},
+    {w:"你",e:"Thanks. Do you have brown sugar?",z:"谢谢，有黑糖吗？"},
+    {w:"员",e:"Yes, next to the tea.",z:"有，在茶叶旁边。"}],
+   voc:[{w:"find",m:"找"},{w:"shelf",m:"货架"},{w:"right",m:"右边"},{w:"next to",m:"在…旁边"},{w:"tea",m:"茶"}],
+   tip:"购物找物：'Where can I find…?' 比 'Where is…' 更自然。'on your right/left' 指方位。",task:"下次去超市，用英语问店员一次 'Where can I find…?'",visa:{w:"documents",m:"文件/证件"}},
+
+  {scene:"life",title:"预约看病",dia:[
+    {w:"你",e:"Hello, I'd like to book an appointment.",z:"您好，我想预约。"},
+    {w:"护",e:"Sure, what's the problem?",z:"可以，哪里不舒服？"},
+    {w:"你",e:"I have a sore throat.",z:"我喉咙痛。"},
+    {w:"护",e:"OK, come at 3 p.m. tomorrow.",z:"好，明天下午3点来。"}],
+   voc:[{w:"book",m:"预约"},{w:"appointment",m:"预约（看病）"},{w:"problem",m:"问题/不适"},{w:"sore throat",m:"喉咙痛"},{w:"come",m:"来"}],
+   tip:"看病三步走：book→说症状→确认时间。症状：headache 头痛 / fever 发烧 / cough 咳嗽。",task:"背三个症状词：sore throat, headache, fever。写小纸条贴收银台。",visa:{w:"NHS",m:"英国国民医疗"}},
+
+  {scene:"life",title:"打电话预约",dia:[
+    {w:"你",e:"Hi, is this ALS Bubble Tea?",z:"嗨，是 ALS 奶茶店吗？"},
+    {w:"客",e:"No, this is the landlord.",z:"不是，我是房东。"},
+    {w:"你",e:"Oh sorry, wrong number!",z:"哦抱歉，打错了！"},
+    {w:"客",e:"No worries, bye.",z:"没事，拜拜。"}],
+   voc:[{w:"hello",m:"喂/你好"},{w:"landlord",m:"房东"},{w:"wrong number",m:"打错电话"},{w:"no worries",m:"没事"},{w:"bye",m:"拜拜"}],
+   tip:"接电话先报身份 'This is…'。打错说 'wrong number'，对方回 'No worries' 很地道。",task:"练习电话开场：'Hello, this is [名] from ALS Bubble Tea.'",visa:{w:"landlord",m:"房东"}},
+
+  {scene:"visa",title:"谈论家庭（面试高频）",dia:[
+    {w:"官",e:"Tell me about your family.",z:"介绍一下你的家庭。"},
+    {w:"你",e:"I'm married. My wife is British.",z:"我已婚，我妻子是英国人。"},
+    {w:"官",e:"Do you have children?",z:"有孩子吗？"},
+    {w:"你",e:"No, not yet. We plan to in the future.",z:"暂时没有，将来计划要。"}],
+   voc:[{w:"married",m:"已婚"},{w:"wife",m:"妻子"},{w:"husband",m:"丈夫"},{w:"children",m:"孩子"},{w:"future",m:"未来"}],
+   tip:"配偶签面试常问家庭。准备：married / wife or husband / children / live together。",task:"用英语写 3 句介绍你的家庭，存手机备忘录背。",visa:{w:"married",m:"已婚"}},
+
+  {scene:"life",title:"描述日常（现在时）",dia:[
+    {w:"友",e:"What do you do every day?",z:"你每天做什么？"},
+    {w:"你",e:"I open the shop at 11 and close at 9.",z:"我11点开店，9点关店。"},
+    {w:"友",e:"That's a long day!",z:"好长的一天！"},
+    {w:"你",e:"Yes, but I enjoy it.",z:"是啊，但我挺享受。"}],
+   voc:[{w:"every day",m:"每天"},{w:"open",m:"开（店）"},{w:"close",m:"关（店）"},{w:"long day",m:"漫长一天"},{w:"enjoy",m:"享受"}],
+   tip:"现在时讲习惯：I + 动词原形。open/close/work/live 都是高频动词。",task:"用现在时列一天 3 件事：'I wake up at… / I make tea at… / I close at…'",visa:{w:"live together",m:"同居"}},
+
+  {scene:"life",title:"过去式入门（昨天）",dia:[
+    {w:"友",e:"How was your day yesterday?",z:"昨天过得怎样？"},
+    {w:"你",e:"It was busy. We sold 120 cups!",z:"很忙，我们卖了120杯！"},
+    {w:"友",e:"Wow, that's great.",z:"哇，太棒了。"},
+    {w:"你",e:"Yes, I was happy.",z:"是啊，我很开心。"}],
+   voc:[{w:"yesterday",m:"昨天"},{w:"was",m:"是（过去）"},{w:"sold",m:"卖（过去）"},{w:"great",m:"很棒"},{w:"happy",m:"开心"}],
+   tip:"过去式：am/is→was, are→were, sell→sold, go→went。讲故事必有过去式。",task:"用 'Yesterday I…' 造 3 句过去式（woke, made, sold 等）。",visa:{w:"financial",m:"财务的"}},
+
+  {scene:"life",title:"将来计划（will / going to）",dia:[
+    {w:"友",e:"What will you do next year?",z:"明年你打算做什么？"},
+    {w:"你",e:"I'm going to open a second shop.",z:"我打算开第二家店。"},
+    {w:"友",e:"Really? That's exciting!",z:"真的吗？太令人兴奋了！"},
+    {w:"你",e:"Yes, I hope so.",z:"是啊，希望如此。"}],
+   voc:[{w:"next year",m:"明年"},{w:"going to",m:"打算"},{w:"second",m:"第二"},{w:"exciting",m:"令人兴奋"},{w:"hope",m:"希望"}],
+   tip:"计划用 'I'm going to…'。'What will you do…?' 问未来。'next week/month/year' 表将来。",task:"用 'I'm going to…' 说三个未来计划（开店/学英语/旅游）。",visa:{w:"plan",m:"计划"}},
+
+  {scene:"life",title:"礼貌请求",dia:[
+    {w:"你",e:"Could you pass me the cup, please?",z:"能递一下杯子吗，谢谢？"},
+    {w:"员",e:"Sure, here you go.",z:"当然，给你。"},
+    {w:"你",e:"Thanks a lot!",z:"太感谢了！"},
+    {w:"员",e:"Anytime.",z:"随时。"}],
+   voc:[{w:"could you",m:"您能…吗"},{w:"please",m:"请"},{w:"here you go",m:"给你"},{w:"thanks a lot",m:"非常感谢"},{w:"anytime",m:"随时"}],
+   tip:"礼貌请求用 'Could you…, please?' 比 'Can you' 更客气，店内/面试都加分。",task:"今天对员工/家人用 'Could you…, please?' 提一个请求。",visa:{w:"request",m:"请求/申请"}},
+
+  {scene:"life",title:"数字·时间·价格",dia:[
+    {w:"你",e:"We open at eleven and close at nine.",z:"我们11点开，9点关。"},
+    {w:"客",e:"Okay, I'll come at three thirty.",z:"好，我三点半来。"},
+    {w:"你",e:"Perfect. See you then.",z:"完美，到时候见。"}],
+   voc:[{w:"eleven",m:"11"},{w:"nine",m:"9"},{w:"three thirty",m:"3:30"},{w:"perfect",m:"完美"},{w:"see you",m:"回头见"}],
+   tip:"时间：3:30 = three thirty / half past three。营业时间必会：open/close at + 数字。",task:"用英语说出营业时间，及三个常见价格（如 £4.50）。",visa:{w:"passport",m:"护照"}},
+
+  {scene:"life",title:"天气与季节",dia:[
+    {w:"邻",e:"Lovely weather today!",z:"今天天气真好！"},
+    {w:"你",e:"Yes, it's sunny and warm.",z:"是啊，阳光明媚又暖和。"},
+    {w:"邻",e:"Better than yesterday's rain.",z:"比昨天下雨好多了。"},
+    {w:"你",e:"Totally agree.",z:"完全同意。"}],
+   voc:[{w:"weather",m:"天气"},{w:"sunny",m:"晴朗"},{w:"warm",m:"暖和"},{w:"rain",m:"雨"},{w:"agree",m:"同意"}],
+   tip:"天气是英国人最爱话题。sunny/rainy/windy/cold/hot 五个词走天下。'Lovely weather!' 万能开场。",task:"和顾客聊一句天气：'Lovely weather today, isn't it?'",visa:{w:"season",m:"季节"}},
+
+  {scene:"life",title:"食物与喜好",dia:[
+    {w:"客",e:"Do you like British food?",z:"你喜欢英国菜吗？"},
+    {w:"你",e:"Some, but I love Chinese tea most.",z:"有些喜欢，但我最爱中国茶。"},
+    {w:"客",e:"Me too! What's your favourite?",z:"我也是！你最爱什么？"},
+    {w:"你",e:"Oolong and matcha from Taiwan.",z:"台湾的乌龙和抹茶。"}],
+   voc:[{w:"like",m:"喜欢"},{w:"love",m:"热爱"},{w:"favourite",m:"最爱"},{w:"food",m:"食物"},{w:"tea",m:"茶"}],
+   tip:"喜好句型：I like… / I love… / My favourite is…。问别人用 'Do you like…?'",task:"用三句英语说最爱的食物/饮品（练店铺主打：oolong, matcha）。",visa:{w:"favourite",m:"最喜欢的"}},
+
+  {scene:"life",title:"在餐厅",dia:[
+    {w:"服",e:"A table for two?",z:"两位吗？"},
+    {w:"你",e:"Yes, by the window, please.",z:"对，靠窗的，谢谢。"},
+    {w:"服",e:"This way, please.",z:"这边请。"},
+    {w:"你",e:"Thank you.",z:"谢谢。"}],
+   voc:[{w:"table",m:"桌子"},{w:"by the window",m:"靠窗"},{w:"this way",m:"这边"},{w:"two",m:"两位"},{w:"please",m:"请"}],
+   tip:"餐厅用语：'A table for two/three?' 问人数；'This way, please' 引座。",task:"设想带朋友去餐厅，说：'A table for two, by the window.'",visa:{w:"accommodation",m:"住宿/住址"}},
+
+  {scene:"life",title:"交通出行",dia:[
+    {w:"你",e:"How do I get to the station?",z:"去车站怎么走？"},
+    {w:"人",e:"Take the bus, it's number 4.",z:"坐公交，4路。"},
+    {w:"你",e:"Where's the bus stop?",z:"公交站在哪？"},
+    {w:"人",e:"Just around the corner.",z:"就在拐角处。"}],
+   voc:[{w:"station",m:"车站"},{w:"bus",m:"公交"},{w:"number",m:"号码"},{w:"corner",m:"拐角"},{w:"around",m:"在…周围"}],
+   tip:"出行：'How do I get to…?' 问路线；'Take the bus/train' 说方式；'around the corner' 很近。",task:"查家到店的地铁路线，用英语说：'Take the… to…'",visa:{w:"travel",m:"出行/旅行"}},
+
+  {scene:"life",title:"紧急情况",dia:[
+    {w:"你",e:"Help! Call an ambulance, please!",z:"救命！请叫救护车！"},
+    {w:"人",e:"Okay, I'm calling 999 now.",z:"好，我马上打999。"},
+    {w:"你",e:"Thank you, she can't breathe.",z:"谢谢，她喘不上气。"},
+    {w:"人",e:"Stay calm, help is coming.",z:"冷静，救援来了。"}],
+   voc:[{w:"help",m:"救命/帮忙"},{w:"ambulance",m:"救护车"},{w:"call",m:"打电话"},{w:"breathe",m:"呼吸"},{w:"calm",m:"冷静"}],
+   tip:"英国急救 999 / 非紧急 101。'Call an ambulance' 是救命句，必须会。'Stay calm' 安抚用。",task:"记两个号码：999（紧急）/ 101（非紧急）。说 'Call an ambulance!'",visa:{w:"emergency",m:"紧急"}},
+
+  {scene:"visa",title:"签证词汇专题·申请与材料",dia:[
+    {w:"官",e:"Did you submit your application online?",z:"你在线上提交申请了吗？"},
+    {w:"你",e:"Yes, with all the required evidence.",z:"是的，附齐了所有必需材料。"},
+    {w:"官",e:"Good. We'll review your documents.",z:"好，我们会审核你的文件。"},
+    {w:"你",e:"Thank you for your help.",z:"谢谢你的帮助。"}],
+   voc:[{w:"submit",m:"提交"},{w:"online",m:"线上"},{w:"required",m:"必需的"},{w:"evidence",m:"证据"},{w:"review",m:"审核"}],
+   tip:"续签核心动词：submit（提交）/ provide（提供）/ review（审核）/ approve（批准）。材料统称 documents/evidence。",task:"把签证高频词写小卡：submit, evidence, documents, approve。每天看一遍。",visa:{w:"submit",m:"提交"}},
+
+  {scene:"visa",title:"签证面试常见问题",dia:[
+    {w:"官",e:"When did you get married?",z:"你们什么时候结婚的？"},
+    {w:"你",e:"We got married in 2024 in China.",z:"我们2024年在中国结婚。"},
+    {w:"官",e:"How do you keep in touch?",z:"你们怎么保持联系？"},
+    {w:"你",e:"We video call every day.",z:"我们每天视频通话。"}],
+   voc:[{w:"married",m:"结婚"},{w:"keep in touch",m:"保持联系"},{w:"video call",m:"视频通话"},{w:"every day",m:"每天"},{w:"China",m:"中国"}],
+   tip:"面试必准备：结婚时间/地点、如何维持关系（video call, photos, visits）、未来共同生活计划。",task:"用英语准备两个面试答案：结婚时间 + 如何保持联系。录音练到流利。",visa:{w:"interview",m:"面试"}},
+
+  {scene:"life",title:"描述人与外貌",dia:[
+    {w:"你",e:"My wife has long black hair.",z:"我妻子留黑色长发。"},
+    {w:"友",e:"Is she tall?",z:"她高吗？"},
+    {w:"你",e:"No, she's medium height.",z:"不，她中等身高。"},
+    {w:"友",e:"I see, very nice.",z:"明白了，挺好。"}],
+   voc:[{w:"hair",m:"头发"},{w:"tall",m:"高"},{w:"medium height",m:"中等身高"},{w:"short",m:"矮/短"},{w:"nice",m:"好"}],
+   tip:"描述人：hair（头发）/ height（身高）/ wear glasses（戴眼镜）。'medium height' 比 short/tall 常用。",task:"用英语描述一位家人或员工的外貌（3 句话）。",visa:{w:"photograph",m:"照片"}},
+
+  {scene:"life",title:"购物退换货",dia:[
+    {w:"客",e:"I want to return this cup.",z:"我想退这个杯子。"},
+    {w:"你",e:"Sure, do you have the receipt?",z:"可以，有收据吗？"},
+    {w:"客",e:"Yes, here it is.",z:"有，在这。"},
+    {w:"你",e:"No problem, I'll refund you.",z:"没问题，我退款给你。"}],
+   voc:[{w:"return",m:"退货"},{w:"receipt",m:"收据"},{w:"refund",m:"退款"},{w:"here it is",m:"在这"},{w:"problem",m:"问题"}],
+   tip:"退换货：return（退）/ exchange（换）/ refund（退款）/ receipt（收据）。店员也要会。",task:"练退货对话：'I want to return this. Do you have the receipt?'",visa:{w:"refund",m:"退款"}},
+
+  {scene:"life",title:"爱好与休闲",dia:[
+    {w:"友",e:"What do you do for fun?",z:"你平时怎么放松？"},
+    {w:"你",e:"I enjoy making tea and walking.",z:"我喜欢泡茶和散步。"},
+    {w:"友",e:"Nice! I like cooking.",z:"不错！我喜欢做饭。"},
+    {w:"你",e:"We should cook together!",z:"我们该一起做饭！"}],
+   voc:[{w:"fun",m:"乐趣"},{w:"enjoy",m:"享受"},{w:"walking",m:"散步"},{w:"cooking",m:"做饭"},{w:"together",m:"一起"}],
+   tip:"爱好句型：I enjoy + 动词-ing / I like + 动词-ing。'for fun' = 为了消遣。",task:"用 'I enjoy…' 说两个爱好（可加 making tea）。",visa:{w:"hobby",m:"爱好"}},
+
+  {scene:"visa",title:"工作与生意（店铺）",dia:[
+    {w:"官",e:"Tell me about your business.",z:"说说你的生意。"},
+    {w:"你",e:"I run a bubble tea shop in York.",z:"我在约克开了一家奶茶店。"},
+    {w:"官",e:"How is it going?",z:"经营得如何？"},
+    {w:"你",e:"It's growing. We get busier each month.",z:"在成长，生意一个月比一个月好。"}],
+   voc:[{w:"business",m:"生意"},{w:"run",m:"经营"},{w:"shop",m:"店铺"},{w:"growing",m:"成长中"},{w:"busier",m:"更忙/更好"}],
+   tip:"聊生意：run a shop / own a business / It's growing。面试可证明扎根英国。",task:"准备一段 30 秒自我介绍：你是谁、做什么生意、在哪里。",visa:{w:"self-employed",m:"自雇"}},
+
+  {scene:"life",title:"复习①·综合对话（店内）",dia:[
+    {w:"客",e:"One brown sugar milk tea, large, no ice.",z:"一杯黑糖奶茶，大杯，无冰。"},
+    {w:"你",e:"Sure, that's £5. Tap here, please.",z:"好的，5英镑，请这边刷。"},
+    {w:"客",e:"Done. For here, thanks.",z:"付好了，堂食，谢谢。"},
+    {w:"你",e:"Great, five minutes. Enjoy!",z:"好，五分钟，请慢用！"}],
+   voc:[{w:"one",m:"一杯"},{w:"no ice",m:"无冰"},{w:"done",m:"好了/付完"},{w:"enjoy",m:"请享用"},{w:"great",m:"好"}],
+   tip:"复习日：把第2、4、5天句型串成完整点单流程，店里每天真用得上。",task:"完整走一遍点单：尺寸→糖度→冰量→价格→支付→堂食/外带。",visa:{w:"renew",m:"续签"}},
+
+  {scene:"visa",title:"复习②·续签路径与口语模板",dia:[
+    {w:"你",e:"I passed A1, now I need A2 for renewal.",z:"我过了A1，现在续签需要A2。"},
+    {w:"友",e:"Right, and B1 later for settlement?",z:"对，之后永居要B1？"},
+    {w:"你",e:"Exactly. I study a little every day.",z:"没错，我每天学一点。"},
+    {w:"友",e:"That's the way!",z:"这就对了！"}],
+   voc:[{w:"passed",m:"通过（过去）"},{w:"renewal",m:"续签"},{w:"settlement",m:"永居"},{w:"every day",m:"每天"},{w:"way",m:"方法/路"}],
+   tip:"复习日：把签证路径说顺——A1✅→A2（续签FLR M）→B1（永居ILR）。'I study a little every day' 体现持续努力。",task:"用英文向朋友解释一遍签证路径与目标（A1→A2→B1）。",visa:{w:"ILR",m:"永居（无限期居留）"}}]
+];
+
+/* ============ 状态 ============ */
+const STORE_KEY="als_english_v2";
+function load(){try{return JSON.parse(localStorage.getItem(STORE_KEY))||{}}catch(e){return{}}}
+function save(){localStorage.setItem(STORE_KEY,JSON.stringify(data))}
+let data=load();
+if(!data.completed) data.completed={};
+if(!data.mistakes) data.mistakes=[];
+if(!data.streak) data.streak=0;
+if(!data.lastCheck) data.lastCheck="";
+
+/* ============ 语音 ============ */
+let voice=null, speakingEl=null;
+function pickVoice(){const vs=speechSynthesis.getVoices();voice=vs.find(v=>/en-GB/i.test(v.lang))||vs.find(v=>/^en/i.test(v.lang))||null;}
+if('speechSynthesis' in window){pickVoice();speechSynthesis.onvoiceschanged=pickVoice;}
+function setPlaying(el,on){
+  if(speakingEl&&speakingEl!==el)speakingEl.classList.remove('spk-on');
+  speakingEl=on?el:null; if(el)el.classList.toggle('spk-on',on);
+}
+function toast(msg){const el=document.getElementById('toast');if(!el)return;el.textContent=msg;el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),2200);}
+function speak(text,el){
+  if(!('speechSynthesis'in window)){toast('当前浏览器不支持语音，请用 Chrome/Edge/Safari');return;}
+  speechSynthesis.cancel(); setPlaying(el,true);
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang='en-GB'; if(voice)u.voice=voice; u.rate=0.92; u.pitch=1;
+  u.onend=()=>setPlaying(el,false); u.onerror=()=>setPlaying(el,false);
+  // Chrome 已知 bug：cancel 后立即 speak 可能被丢弃，加微小延迟修复
+  setTimeout(()=>{ try{speechSynthesis.resume();speechSynthesis.speak(u);}catch(e){setPlaying(el,false);} },60);
+}
+function speakSeq(list,btn){
+  if(!('speechSynthesis'in window))return;
+  speechSynthesis.cancel(); setPlaying(btn,true);
+  let i=0;
+  function next(){
+    if(i>=list.length){setPlaying(btn,false);return;}
+    const u=new SpeechSynthesisUtterance(list[i++]);
+    u.lang='en-GB'; if(voice)u.voice=voice; u.rate=0.92;
+    u.onend=next; u.onerror=()=>{setPlaying(btn,false);};
+    speechSynthesis.speak(u);
+  }
+  setTimeout(next,60);
+}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.spk');
+  if(t){e.stopPropagation();speak(decodeURIComponent(t.dataset.t),t);}
+});
+function spk(text){return `<span class="spk" data-t="${encodeURIComponent(text)}" title="朗读">🔊</span>`;}
+
+/* ============ 工具 ============ */
+function sceneText(s){return s==="shop"?"🧋 奶茶店":s==="life"?"💬 日常":"🛂 签证";}
+function sceneClass(s){return s==="shop"?"shop":s==="life"?"life":"visa";}
+function todayStr(){return new Date().toLocaleDateString('en-CA');}
+function completedCount(){return Object.keys(data.completed).filter(k=>data.completed[k]).length;}
+function nextLessonIdx(){
+  for(let i=0;i<LESSONS.length;i++) if(!data.completed[i]) return i;
+  return -1;
+}
+
+/* ============ 渲染：学习 ============ */
+function renderStudy(){
+  const idx=nextLessonIdx();
+  const card=document.getElementById('lessonCard');
+  if(idx===-1){
+    card.innerHTML=`<div class="big">🎉 30 课全部学完！</div>
+      <div class="muted" style="margin:8px 0">你已经学完所有课程。可以去「📕 错题库」复习薄弱点，或点下面重置重新过一遍。</div>
+      <button class="btn-ghost" id="restart">🔄 重置全部进度</button>`;
+    document.getElementById('restart').onclick=()=>{data.completed={};save();renderAll();};
+    return;
+  }
+  const L=LESSONS[idx];
+  const allEn=L.dia.map(d=>d.e);
+  card.innerHTML=`
+    <div class="row">
+      <span class="tag ${sceneClass(L.scene)}">${sceneText(L.scene)}</span>
+      <span class="muted">第 ${idx+1} 课 / 共 ${LESSONS.length} 课</span>
+    </div>
+    <div class="big">${L.title} ${spk(L.title)}</div>
+    <div style="margin:6px 0"><button class="btn-ghost btn-sm" id="playAll">🔊 朗读整课</button></div>
+    <div class="dialogue">${L.dia.map(d=>`
+      <div class="line">
+        <div class="who">${d.w}</div>
+        <div class="en"><div class="e">${d.e} ${spk(d.e)}</div><div class="z">${d.z}</div>
+          <span class="addm" data-add="${encodeURIComponent(d.e)}">记错</span></div>
+      </div>`).join('')}</div>
+    <div class="muted" style="margin-top:4px">📘 重点词汇</div>
+    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="addm" data-add="${encodeURIComponent(v.w)}">记错</span></span>`).join('')}</div>
+    <div class="tip">💡 ${L.tip}</div>
+    <div class="task">✅ 今日任务（2分钟）：${L.task}</div>
+    <div class="visa-word">🛂 签证词卡：<b>${L.visa.w}</b> — ${L.visa.m} ${spk(L.visa.w)}</div>
+    <button class="btn-done" id="doneBtn">✅ 学完这节课（自动跳到下一课）</button>`;
+  document.getElementById('playAll').onclick=()=>speakSeq(allEn,document.getElementById('playAll'));
+  document.getElementById('doneBtn').onclick=()=>markDone(idx);
+  card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add)));
+}
+
+/* ============ 记错弹窗 ============ */
+let modalText="";
+function openModal(text){modalText=text;document.getElementById('mmCorrect').value=text;
+  document.getElementById('mmWrong').value="";document.getElementById('mmNote').value="";
+  document.getElementById('mask').classList.add('on');document.getElementById('mmWrong').focus();}
+function closeModal(){document.getElementById('mask').classList.remove('on');}
+document.getElementById('mmCancel').onclick=closeModal;
+document.getElementById('mmSave').onclick=()=>{
+  const wrong=document.getElementById('mmWrong').value.trim();
+  const note=document.getElementById('mmNote').value.trim();
+  if(!wrong&&!note){closeModal();return;}
+  data.mistakes.unshift({id:Date.now(),correct:modalText,wrong:wrong,note:note,mastered:false});
+  save();closeModal();renderMistakes();renderAll();
+};
+
+/* ============ 错题库 ============ */
+function renderMistakes(){
+  const list=document.getElementById('mistakeList');
+  document.getElementById('mCount').textContent=data.mistakes.length?`(${data.mistakes.length})`:"";
+  if(!data.mistakes.length){
+    list.innerHTML=`<div class="card muted">还没有错题。在学习页点句子或单词后的「记错」即可加入。</div>`;return;
+  }
+  list.innerHTML=data.mistakes.map(m=>`
+    <div class="mistake">
+      <div class="correct">✅ ${m.correct} <span class="spk" data-t="${encodeURIComponent(m.correct)}">🔊</span></div>
+      ${m.wrong?`<div class="wrong">❌ 我曾错写：${m.wrong}</div>`:""}
+      ${m.note?`<div class="note">📝 ${m.note}</div>`:""}
+      <div class="acts">
+        <button class="btn-ghost btn-sm" data-play="${encodeURIComponent(m.correct)}">🔊 朗读</button>
+        ${m.mastered?'<span class="done-badge">已掌握 ✓</span>':'<button class="btn-ghost btn-sm" data-master="'+m.id+'">标记掌握</button>'}
+        <button class="btn-danger btn-sm" data-del="${m.id}">删除</button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>speak(decodeURIComponent(b.dataset.play),b));
+  list.querySelectorAll('[data-master]').forEach(b=>b.onclick=()=>{const id=+b.dataset.master;const m=data.mistakes.find(x=>x.id===id);if(m)m.mastered=true;save();renderMistakes();});
+  list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const id=+b.dataset.del;data.mistakes=data.mistakes.filter(x=>x.id!==id);save();renderMistakes();renderAll();});
+}
+document.getElementById('addMistake').onclick=()=>{
+  const c=document.getElementById('mCorrect').value.trim();
+  const w=document.getElementById('mWrong').value.trim();
+  const n=document.getElementById('mNote').value.trim();
+  if(!c){alert('请填写正确表达');return;}
+  data.mistakes.unshift({id:Date.now(),correct:c,wrong:w,note:n,mastered:false});
+  save();
+  document.getElementById('mCorrect').value="";document.getElementById('mWrong').value="";document.getElementById('mNote').value="";
+  renderMistakes();renderAll();
+};
+document.getElementById('exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(data.mistakes,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='错题库备份.json';a.click();
+};
+document.getElementById('importBtn').onclick=()=>document.getElementById('importFile').click();
+document.getElementById('importFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();r.onload=()=>{try{const arr=JSON.parse(r.result);if(Array.isArray(arr)){data.mistakes=arr.concat(data.mistakes);save();renderMistakes();renderAll();alert('导入成功');}}catch(err){alert('文件格式错误');}};
+  r.readAsText(f);
+};
+
+/* ============ 进度 ============ */
+function renderProgress(){
+  const list=document.getElementById('progressList');
+  list.innerHTML=LESSONS.map((l,i)=>`
+    <div class="list-item ${data.completed[i]?'grey':''}">
+      <span>${i+1}. ${sceneText(l.scene)} · ${l.title}</span>
+      <span class="chk ${data.completed[i]?'on':''}" data-i="${i}">${data.completed[i]?'✓':''}</span>
+    </div>`).join('');
+  list.querySelectorAll('.chk').forEach(c=>c.onclick=()=>{
+    const i=+c.dataset.i;
+    if(data.completed[i])delete data.completed[i];else data.completed[i]=true;
+    save();renderAll();
+  });
+}
+document.getElementById('resetBtn').onclick=()=>{
+  if(confirm('确定重置全部学习进度？错题库会保留。')){data.completed={};save();renderAll();}
+};
+
+/* ============ 完成一课 ============ */
+function markDone(idx){
+  data.completed[idx]=true;
+  const t=todayStr();
+  const yest=new Date(Date.now()-86400000).toLocaleDateString('en-CA');
+  data.streak=(data.lastCheck===yest)?(data.streak||0)+1:1;
+  data.lastCheck=t;
+  save();renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ============ Tab 切换 ============ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');
+  const tab=t.dataset.tab;
+  document.getElementById('tab-study').classList.toggle('hidden',tab!=='study');
+  document.getElementById('tab-mistake').classList.toggle('hidden',tab!=='mistake');
+  document.getElementById('tab-progress').classList.toggle('hidden',tab!=='progress');
+});
+
+/* ============ 总渲染 ============ */
+function renderAll(){
+  document.getElementById('today').textContent=new Date().toLocaleDateString('zh-CN');
+  document.getElementById('streak').textContent="🔥 "+(data.streak||0)+" 天";
+  const c=completedCount();
+  document.getElementById('progText').textContent=c+" / "+LESSONS.length;
+  document.getElementById('progBar').style.width=(c/LESSONS.length*100)+"%";
+  renderStudy();renderMistakes();renderProgress();
+}
+renderAll();
+</script>
+</body>
+</html>
