@@ -52,6 +52,10 @@
   .btn-danger{background:var(--dangerbg);color:var(--danger)}
   .btn-sm{font-size:12px;padding:6px 9px;border-radius:8px}
   .addm{background:#eef2f7;color:var(--brand);font-size:11px;padding:3px 7px;border-radius:7px;margin-left:6px;cursor:pointer}
+  .star{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:24px;border-radius:8px;font-size:15px;cursor:pointer;margin-left:2px;user-select:none;color:#f59e0b}
+  .star.on{background:#fef3c7}
+  .star:active{transform:scale(.92)}
+  .wzh{color:var(--sub);font-size:13px;margin-top:3px}
   .done-badge{font-size:11px;color:var(--ok);font-weight:700}
   .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px}
   .list-item:last-child{border-bottom:none}
@@ -106,6 +110,7 @@
 <div class="tabs">
   <div class="tab on" data-tab="study">📚 学习</div>
   <div class="tab" data-tab="mistake">📕 错题库 <span id="mCount"></span></div>
+  <div class="tab" data-tab="words">📒 单词本 <span id="wCount"></span></div>
   <div class="tab" data-tab="progress">📊 进度</div>
 </div>
 <div class="hintbar">💡 每句英文 / 单词后的 🔊 可朗读（英式发音）；点「学完这节课」自动跳过已学内容。</div>
@@ -147,6 +152,29 @@
   </div>
   <div id="mistakeList"></div>
   <input type="file" id="importFile" accept="application/json" class="hidden" />
+</div>
+
+<div id="tab-words" class="hidden">
+  <div class="card">
+    <div class="row">
+      <b>➕ 添加陌生单词</b>
+      <div>
+        <button class="btn-ghost btn-sm" id="wQuiz">🎯 测验</button>
+        <button class="btn-ghost btn-sm" id="wExport">导出</button>
+        <button class="btn-ghost btn-sm" id="wImport">导入</button>
+      </div>
+    </div>
+    <div style="margin-top:8px">
+      <label style="font-size:12.5px;font-weight:700">单词（英文）</label>
+      <input id="wEn" placeholder="例如：insulated" />
+      <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">意思（中文）</label>
+      <input id="wZh" placeholder="例如：隔热的 / 保温的" />
+      <button class="btn-done" style="margin-top:10px" id="addWord">收藏到单词本</button>
+    </div>
+    <div class="disclaimer">💡 在学习页每个单词后点 ☆ 即可一键收藏；这里也能手动添加你在店里/外面听到的生词。</div>
+  </div>
+  <div id="wordList"></div>
+  <input type="file" id="wImportFile" accept="application/json" class="hidden" />
 </div>
 
 <div id="tab-progress" class="hidden">
@@ -426,6 +454,7 @@ function save(){localStorage.setItem(STORE_KEY,JSON.stringify(data))}
 let data=load();
 if(!data.completed) data.completed={};
 if(!data.mistakes) data.mistakes=[];
+if(!data.words) data.words=[];
 if(!data.streak) data.streak=0;
 if(!data.lastCheck) data.lastCheck="";
 
@@ -503,7 +532,7 @@ function renderStudy(){
           <span class="addm" data-add="${encodeURIComponent(d.e)}">记错</span></div>
       </div>`).join('')}</div>
     <div class="muted" style="margin-top:4px">📘 重点词汇</div>
-    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="addm" data-add="${encodeURIComponent(v.w)}">记错</span></span>`).join('')}</div>
+    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="star ${isCollected(v.w)?'on':''}" data-star="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}" data-src="${encodeURIComponent('第'+(idx+1)+'课 '+L.title)}">${isCollected(v.w)?'⭐':'☆'}</span><span class="addm" data-add="${encodeURIComponent(v.w)}">记错</span></span>`).join('')}</div>
     <div class="tip">💡 ${L.tip}</div>
     <div class="task">✅ 今日任务（2分钟）：${L.task}</div>
     <div class="visa-word">🛂 签证词卡：<b>${L.visa.w}</b> — ${L.visa.m} ${spk(L.visa.w)}</div>
@@ -511,6 +540,7 @@ function renderStudy(){
   document.getElementById('playAll').onclick=()=>speakSeq(allEn,document.getElementById('playAll'));
   document.getElementById('doneBtn').onclick=()=>markDone(idx);
   card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add)));
+  card.querySelectorAll('[data-star]').forEach(el=>el.onclick=()=>toggleCollected(decodeURIComponent(el.dataset.star),decodeURIComponent(el.dataset.zh),decodeURIComponent(el.dataset.src),el));
 }
 
 /* ============ 记错弹窗 ============ */
@@ -572,6 +602,74 @@ document.getElementById('importFile').onchange=e=>{
   r.readAsText(f);
 };
 
+/* ============ 单词本（收藏生词） ============ */
+function isCollected(en){return !!(data.words&&data.words.find(w=>w.en===en));}
+function toggleCollected(en,zh,src,el){
+  const i=data.words.findIndex(w=>w.en===en);
+  if(i>=0){
+    data.words.splice(i,1);
+    if(el){el.classList.remove('on');el.textContent='☆';}
+    toast('已从单词本移除');
+  }else{
+    data.words.unshift({id:Date.now(),en:en,zh:zh,src:src||'',mastered:false});
+    if(el){el.classList.add('on');el.textContent='⭐';}
+    toast('⭐ 已收藏，去「单词本」复习');
+  }
+  save();renderWords();
+}
+let quizMode=false;
+function renderWords(){
+  const list=document.getElementById('wordList');
+  if(!list)return;
+  document.getElementById('wCount').textContent=data.words.length?`(${data.words.length})`:"";
+  if(!data.words.length){
+    list.innerHTML=`<div class="card muted">单词本还是空的。在学习页点单词后的 ☆，或上面手动添加你在外面听到的生词。</div>`;return;
+  }
+  list.innerHTML=data.words.map(w=>`
+    <div class="mistake" data-word="${encodeURIComponent(w.en)}">
+      <div class="row">
+        <div><b style="font-size:15px">${w.en}</b> ${spk(w.en)} ${w.mastered?'<span class="done-badge">已掌握 ✓</span>':''}</div>
+      </div>
+      <div class="wzh" ${quizMode?'style="visibility:hidden"':''}>${w.zh||''}${w.src?` <span class="mini">· ${w.src}</span>`:''}</div>
+      <div class="acts">
+        <button class="btn-ghost btn-sm" data-play="${encodeURIComponent(w.en)}">🔊 朗读</button>
+        ${w.mastered?'':'<button class="btn-ghost btn-sm" data-master="'+w.id+'">标记掌握</button>'}
+        ${quizMode?'<button class="btn-ghost btn-sm" data-reveal="'+w.id+'">显示意思</button>':''}
+        <button class="btn-danger btn-sm" data-del="${w.id}">删除</button>
+      </div>
+    </div>`).join('');
+  list.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>speak(decodeURIComponent(b.dataset.play),b));
+  list.querySelectorAll('[data-master]').forEach(b=>b.onclick=()=>{const id=+b.dataset.master;const w=data.words.find(x=>x.id===id);if(w)w.mastered=true;save();renderWords();});
+  list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const id=+b.dataset.del;data.words=data.words.filter(x=>x.id!==id);save();renderWords();renderAll();});
+  if(quizMode)list.querySelectorAll('[data-reveal]').forEach(b=>b.onclick=()=>{const card=b.closest('.mistake');const zh=card?card.querySelector('.wzh'):null;if(zh)zh.style.visibility='visible';b.remove();});
+}
+document.getElementById('addWord').onclick=()=>{
+  const en=document.getElementById('wEn').value.trim();
+  const zh=document.getElementById('wZh').value.trim();
+  if(!en){alert('请填写单词');return;}
+  if(isCollected(en)){toast('这个单词已在单词本');return;}
+  data.words.unshift({id:Date.now(),en:en,zh:zh,src:'手动添加',mastered:false});
+  save();
+  document.getElementById('wEn').value="";document.getElementById('wZh').value="";
+  renderWords();renderAll();
+};
+document.getElementById('wQuiz').onclick=()=>{
+  quizMode=!quizMode;
+  document.getElementById('wQuiz').textContent=quizMode?'✅ 退出测验':'🎯 测验';
+  renderWords();
+};
+document.getElementById('wExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(data.words,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='单词本备份.json';a.click();
+};
+document.getElementById('wImport').onclick=()=>document.getElementById('wImportFile').click();
+document.getElementById('wImportFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{const arr=JSON.parse(r.result);if(Array.isArray(arr)){data.words=arr.concat(data.words);save();renderWords();renderAll();alert('导入成功');}}catch(err){alert('文件格式错误');}};
+  r.readAsText(f);
+};
+
 /* ============ 进度 ============ */
 function renderProgress(){
   const list=document.getElementById('progressList');
@@ -608,6 +706,7 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   const tab=t.dataset.tab;
   document.getElementById('tab-study').classList.toggle('hidden',tab!=='study');
   document.getElementById('tab-mistake').classList.toggle('hidden',tab!=='mistake');
+  document.getElementById('tab-words').classList.toggle('hidden',tab!=='words');
   document.getElementById('tab-progress').classList.toggle('hidden',tab!=='progress');
 });
 
@@ -618,7 +717,7 @@ function renderAll(){
   const c=completedCount();
   document.getElementById('progText').textContent=c+" / "+LESSONS.length;
   document.getElementById('progBar').style.width=(c/LESSONS.length*100)+"%";
-  renderStudy();renderMistakes();renderProgress();
+  renderStudy();renderMistakes();renderWords();renderProgress();
 }
 renderAll();
 </script>
