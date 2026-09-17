@@ -30,7 +30,7 @@
   .tag{display:inline-block;font-size:12px;padding:2px 9px;border-radius:999px;background:var(--chip);color:var(--brand);font-weight:700}
   .tag.shop{background:#fef3c7;color:#b45309}.tag.life{background:#dcfce7;color:#15803d}.tag.visa{background:#fee2e2;color:#b91c1c}
   .phase{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700;color:#fff;margin-left:6px}
-  .phase.p1{background:var(--p1)}.phase.p2{background:var(--p2)}.phase.p3{background:var(--p3)}
+  .phase.p1{background:var(--p1)}.phase.p2{background:var(--p2)}.phase.p3{background:var(--p3)}.phase.p4{background:var(--p4)}
   .big{font-size:22px;font-weight:800;margin:6px 0 2px}
   .muted{color:var(--sub);font-size:12.5px}
   .line{display:flex;gap:6px;align-items:flex-start;margin:8px 0}
@@ -88,7 +88,7 @@
   .hintbar{font-size:12px;color:var(--sub);text-align:center;margin:2px 0 8px}
   .spk:active,.btn-done:active,.btn-ghost:active,.tab:active{transform:scale(.98)}
   .phase-head{font-weight:800;font-size:14px;margin:10px 0 4px;padding-left:8px;border-left:4px solid var(--brand)}
-  .phase-head.p1{border-color:var(--p1)}.phase-head.p2{border-color:var(--p2)}.phase-head.p3{border-color:var(--p3)}
+  .phase-head.p1{border-color:var(--p1)}.phase-head.p2{border-color:var(--p2)}.phase-head.p3{border-color:var(--p3)}.phase-head.p4{border-color:var(--p4)}
   .practice-box{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:10px 11px;margin:9px 0}
   .pq{margin:8px 0}
   .pq .q{font-weight:700;font-size:13.5px}
@@ -98,6 +98,19 @@
   .listen-card .lvl{font-size:11px;font-weight:700;color:#fff;padding:1px 7px;border-radius:999px;margin-left:6px}
   .listen-card a{color:var(--brand);font-weight:700;word-break:break-all}
   .train-tip{background:linear-gradient(90deg,#eff6ff,#f0fdf4);border:1px solid #bfdbfe;border-radius:12px;padding:11px;margin-bottom:12px;font-size:13px}
+  .tocbtn{background:var(--brand);color:#fff;width:100%;margin-bottom:10px;font-size:14px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:6px;margin:4px 0 6px}
+  .nav .muted{flex:1;text-align:center}
+  .nav button:disabled{opacity:.4;cursor:not-allowed}
+  .toc-modal{max-width:460px;max-height:82vh;display:flex;flex-direction:column}
+  .toc-scroll{overflow:auto;margin-top:6px}
+  .toc-item{display:flex;align-items:center;gap:6px;padding:9px 8px;border-radius:9px;font-size:13.5px;cursor:pointer}
+  .toc-item:hover{background:#f1f5f9}
+  .toc-item.done{color:var(--ok)}
+  .toc-item.done .toc-num{text-decoration:line-through}
+  .toc-num{color:var(--sub);min-width:26px}
+  .toc-phase{font-weight:800;font-size:13px;margin:12px 0 2px;padding-left:8px}
+  .toc-phase.p1{color:var(--p1)}.toc-phase.p2{color:var(--p2)}.toc-phase.p3{color:var(--p3)}.toc-phase.p4{color:var(--p4)}
 </style>
 </head>
 <body>
@@ -132,9 +145,10 @@
 <div class="hintbar">💡 每句英文 / 单词后的 🔊 可朗读（英式发音）；点「学完这节课」自动跳过已学内容。</div>
 
 <div id="tab-study">
+  <button class="tocbtn" id="tocBtn">📑 课程目录（共 <span id="tocTotal"></span> 课，自由选课）</button>
   <div class="train-tip">
-    🎯 <b>通向无障碍的每日训练</b>：① 学 1 课（2 分钟）→ ② 去「🎧 听力」泡 15 分钟英文耳朵 → ③ 去「💬 实战」开口说。<br>
-    光背不够，<b>听懂 + 开口</b>才是无障碍。每天坚持，A2→B1→B2 自然到位。
+    🎯 <b>通向无障碍的每日训练</b>：① 学 1 课 → ② 去「🎧 听力」泡 15 分钟英文耳朵 → ③ 去「💬 实战」开口说。<br>
+    光背不够，<b>听懂 + 开口</b>才是无障碍。每天坚持，A2→B1→B2→C1 自然到位。
   </div>
   <div class="card" id="lessonCard"></div>
   <div class="card">
@@ -145,6 +159,7 @@
         <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)"><span style="width:10px;height:10px;border-radius:50%;background:var(--p1);margin-top:6px"></span><div><b>A2 生活技能（听说）</b> — 续签 FLR(M) · 本教程阶段一<br><span class="mini">🔜 当前主攻</span></div></div>
         <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line)"><span style="width:10px;height:10px;border-radius:50%;background:var(--p2);margin-top:6px"></span><div><b>B1 生活技能（听说）</b> — 永居 ILR（满5年）· 本教程阶段二</div></div>
         <div style="display:flex;gap:8px;padding:6px 0"><span style="width:10px;height:10px;border-radius:50%;background:var(--p3);margin-top:6px"></span><div><b>B2 自在沟通</b> — 接近母语者，真正"无障碍" · 本教程阶段三</div></div>
+        <div style="display:flex;gap:8px;padding:6px 0"><span style="width:10px;height:10px;border-radius:50%;background:var(--p4);margin-top:6px"></span><div><b>C1 自如精通</b> — 职场/学术/任意话题游刃有余 · 本教程阶段四（冲刺无障碍）</div></div>
       </div>
       <div class="disclaimer">⚠️ 非移民法律建议。除英语外，配偶签还需满足<b>关系真实性</b>与<b>财务要求</b>（通常家庭年收入 ≥ £18,600，有子女另加）。以 <a href="https://www.gov.uk/partner-visa" target="_blank" rel="noopener">gov.uk/partner-visa</a> 为准，可用「深研研」专家核对最新版。</div>
     </details>
@@ -242,432 +257,853 @@
   </div>
 </div>
 
+<div class="mask" id="tocModal">
+  <div class="modal toc-modal">
+    <div class="row">
+      <h3 style="margin:0">📑 课程目录</h3>
+      <button class="btn-ghost btn-sm" id="tocClose">关闭</button>
+    </div>
+    <div class="muted" style="font-size:12px">点任意一课直接跳转；✅ 表示已学完。阶段：A2生存 → B1流畅 → B2自在 → C1自如。</div>
+    <div class="toc-scroll" id="tocList"></div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
 /* ============ 课程数据（三阶段） ============ */
 /* phase: 1=A2生存 2=B1流畅 3=B2自如 */
 const LESSONS = [
-  {phase:1,scene:"shop",title:"开门营业·打招呼",dia:[
-    {w:"你",e:"Hi there! Welcome to ALS Bubble Tea.",z:"你好！欢迎光临 ALS 奶茶。"},
-    {w:"客",e:"Hi, can I see the menu?",z:"嗨，能看一下菜单吗？"},
-    {w:"你",e:"Sure! Here you are.",z:"当然，给你。"},
-    {w:"客",e:"Thank you.",z:"谢谢。"}],
+ {phase:1,scene:"shop",title:"开门营业·打招呼",dia:[
+   {w:"你",e:"Hi there! Welcome to ALS Bubble Tea.",z:"你好！欢迎光临 ALS 奶茶。"},
+   {w:"客",e:"Hi, can I see the menu?",z:"嗨，能看一下菜单吗？"},
+   {w:"你",e:"Sure! Here you are.",z:"当然，给你。"},
+   {w:"客",e:"Thank you.",z:"谢谢。"}],
    voc:[{w:"welcome",m:"欢迎"},{w:"menu",m:"菜单"},{w:"sure",m:"当然"},{w:"here you are",m:"给你"},{w:"thanks",m:"谢谢"}],
-   tip:"打招呼用 Hi / Hello；'Welcome to…' 是店员标准迎客语。",task:"对着镜子说三遍：'Hi there! Welcome to ALS Bubble Tea.' 录音听一遍。",visa:{w:"spouse visa",m:"配偶签证"}},
+   tip:"打招呼用 Hi / Hello；'Welcome to…' 是店员标准迎客语。",
+   task:"对着镜子说三遍：'Hi there! Welcome to ALS Bubble Tea.'",
+   visa:{w:"spouse visa",m:"配偶签证"},q:"一位顾客进门，你第一句该说什么？",a:"Hi there! Welcome to ALS Bubble Tea. What can I get for you?"},
 
-  {phase:1,scene:"shop",title:"点单基础·尺寸甜度温度",dia:[
-    {w:"客",e:"I'd like a milk tea, please.",z:"我要一杯奶茶。"},
-    {w:"你",e:"What size? Medium or large?",z:"什么杯型？中杯还是大杯？"},
-    {w:"客",e:"Medium, half sugar, less ice.",z:"中杯，半糖，少冰。"},
-    {w:"你",e:"Got it. Anything else?",z:"好的，还要别的吗？"}],
+ {phase:1,scene:"shop",title:"点单·尺寸甜度温度",dia:[
+   {w:"客",e:"I'd like a milk tea, please.",z:"我要一杯奶茶。"},
+   {w:"你",e:"What size? Medium or large?",z:"什么杯型？中杯还是大杯？"},
+   {w:"客",e:"Medium, half sugar, less ice.",z:"中杯，半糖，少冰。"},
+   {w:"你",e:"Got it. Anything else?",z:"好的，还要别的吗？"}],
    voc:[{w:"size",m:"杯型/尺寸"},{w:"medium",m:"中杯"},{w:"large",m:"大杯"},{w:"half sugar",m:"半糖"},{w:"less ice",m:"少冰"}],
-   tip:"点单三要素：size→sugar→ice。记住顺序，点单不慌。",task:"用英语自言自语点一杯：'Large, full sugar, no ice.' 换组合说 3 次。",visa:{w:"application",m:"申请"}},
+   tip:"点单三要素：size→sugar→ice。记住顺序，点单不慌。",
+   task:"用英语自言自语点一杯：'Large, full sugar, no ice.' 换组合说 3 次。",
+   visa:{w:"application",m:"申请"},q:"顾客要奶茶但没说杯型和糖度，你怎么问？",a:"What size would you like? Medium or large? And how sweet?"},
 
-  {phase:1,scene:"shop",title:"推荐饮品",dia:[
-    {w:"客",e:"What do you recommend?",z:"你有什么推荐？"},
-    {w:"你",e:"Our best-seller is brown sugar bubble tea.",z:"最畅销的是黑糖珍珠奶茶。"},
-    {w:"客",e:"Sounds good. I'll try it.",z:"听起来不错，我试试。"},
-    {w:"你",e:"Great choice!",z:"好选择！"}],
+ {phase:1,scene:"shop",title:"推荐招牌饮品",dia:[
+   {w:"客",e:"What do you recommend?",z:"你有什么推荐？"},
+   {w:"你",e:"Our best-seller is brown sugar bubble tea.",z:"最畅销的是黑糖珍珠奶茶。"},
+   {w:"客",e:"Sounds good. I'll try it.",z:"听起来不错，我试试。"},
+   {w:"你",e:"Great choice!",z:"好选择！"}],
    voc:[{w:"recommend",m:"推荐"},{w:"best-seller",m:"畅销款"},{w:"brown sugar",m:"黑糖"},{w:"try",m:"尝试"},{w:"choice",m:"选择"}],
-   tip:"推荐用 'Our best-seller is…' / 'I recommend…'。'Sounds good' 万能回应。",task:"背下推荐语，明天用在店里：'Our best-seller is brown sugar bubble tea.'",visa:{w:"evidence",m:"证据/材料"}},
+   tip:"推荐用 'Our best-seller is…' / 'I recommend…'。'Sounds good' 万能回应。",
+   task:"背下推荐语，明天用在店里：'Our best-seller is brown sugar bubble tea.'",
+   visa:{w:"evidence",m:"证据/材料"},q:"顾客问你推荐什么，你怎么答？",a:"Our best-seller is brown sugar bubble tea – would you like to try it?"},
 
-  {phase:1,scene:"shop",title:"付款与找零",dia:[
-    {w:"客",e:"How much is it?",z:"多少钱？"},
-    {w:"你",e:"That's £4.50, please.",z:"一共 4.5 英镑。"},
-    {w:"客",e:"Can I pay by card?",z:"可以刷卡吗？"},
-    {w:"你",e:"Yes, tap here, please.",z:"可以，请这边刷。"}],
+ {phase:1,scene:"shop",title:"付款与价格",dia:[
+   {w:"客",e:"How much is it?",z:"多少钱？"},
+   {w:"你",e:"That's £4.50, please.",z:"一共 4.5 英镑。"},
+   {w:"客",e:"Can I pay by card?",z:"可以刷卡吗？"},
+   {w:"你",e:"Yes, tap here, please.",z:"可以，请这边刷。"}],
    voc:[{w:"how much",m:"多少钱"},{w:"pay",m:"付款"},{w:"by card",m:"刷卡"},{w:"cash",m:"现金"},{w:"tap",m:"感应支付"}],
-   tip:"价格：£4.50 = 'four pounds fifty'。'Can I pay by…?' 问支付方式万能句。",task:"练习报价格：£3.20 / £5.80 / £6.00 各说一遍。",visa:{w:"fee",m:"费用"}},
+   tip:"价格：£4.50 = 'four pounds fifty'。'Can I pay by…?' 问支付方式万能句。",
+   task:"练习报价格：£3.20 / £5.80 / £6.00 各说一遍。",
+   visa:{w:"fee",m:"费用"},q:"顾客问多少钱并要刷卡，你怎么答？",a:"That's £4.50, please. Yes, you can tap your card here."},
 
-  {phase:1,scene:"shop",title:"堂食还是外带",dia:[
-    {w:"你",e:"For here or to go?",z:"堂食还是带走？"},
-    {w:"客",e:"To go, please.",z:"带走，谢谢。"},
-    {w:"你",e:"Sure. It'll be ready in five minutes.",z:"好的，五分钟就好。"},
-    {w:"客",e:"No problem, thanks.",z:"没问题，谢谢。"}],
+ {phase:1,scene:"shop",title:"堂食还是外带",dia:[
+   {w:"你",e:"For here or to go?",z:"堂食还是带走？"},
+   {w:"客",e:"To go, please.",z:"带走，谢谢。"},
+   {w:"你",e:"Sure. It'll be ready in five minutes.",z:"好的，五分钟就好。"},
+   {w:"客",e:"No problem, thanks.",z:"没问题，谢谢。"}],
    voc:[{w:"for here",m:"堂食"},{w:"to go",m:"外带"},{w:"ready",m:"准备好"},{w:"minute",m:"分钟"},{w:"no problem",m:"没问题"}],
-   tip:"'For here or to go?' 是饮品店最高频问句，必须烂熟。'in five minutes' = 五分钟后。",task:"把 'For here or to go?' 设成手机锁屏，今天每次点单先问这句。",visa:{w:"biometric",m:"生物信息采集"}},
+   tip:"'For here or to go?' 是饮品店最高频问句，必须烂熟。'in five minutes' = 五分钟后。",
+   task:"把 'For here or to go?' 设成手机锁屏，今天每次点单先问这句。",
+   visa:{w:"biometric",m:"生物信息采集"},q:"顾客点完说'Actually, make it to go.'，你怎么回？",a:"Sure, no problem – to go it is. It'll be ready in five minutes."},
 
-  {phase:1,scene:"shop",title:"处理做错/投诉",dia:[
-    {w:"客",e:"Sorry, I ordered no sugar.",z:"抱歉，我点的是无糖。"},
-    {w:"你",e:"Oh, I'm so sorry. Let me remake it.",z:"真抱歉，我重做一杯。"},
-    {w:"客",e:"That's OK, take your time.",z:"没事，慢慢来。"},
-    {w:"你",e:"Thank you for your patience.",z:"谢谢你的耐心。"}],
+ {phase:1,scene:"shop",title:"加料与选项",dia:[
+   {w:"客",e:"Can I add pearls?",z:"可以加珍珠吗？"},
+   {w:"你",e:"Of course! Pearls or coconut jelly?",z:"当然！珍珠还是椰果？"},
+   {w:"客",e:"Both, please.",z:"都要，谢谢。"},
+   {w:"你",e:"Great, adding both.",z:"好，两个都加。"}],
+   voc:[{w:"add",m:"加"},{w:"pearls",m:"珍珠"},{w:"coconut jelly",m:"椰果"},{w:"both",m:"都/两个"},{w:"of course",m:"当然"}],
+   tip:"加料：'Can I add…?' 顾客问；'Of course!' 你答。两种都用 'both'。",
+   task:"练习：'Can I add pearls and coconut jelly?' 你回 'Of course, adding both.'",
+   visa:{w:"option",m:"选项"},q:"顾客要加两种料，你怎么确认？",a:"Of course! Pearls and coconut jelly – adding both now."},
+
+ {phase:1,scene:"shop",title:"做错·道歉补救",dia:[
+   {w:"客",e:"Sorry, I ordered no sugar.",z:"抱歉，我点的是无糖。"},
+   {w:"你",e:"Oh, I'm so sorry. Let me remake it.",z:"真抱歉，我重做一杯。"},
+   {w:"客",e:"That's OK, take your time.",z:"没事，慢慢来。"},
+   {w:"你",e:"Thank you for your patience.",z:"谢谢你的耐心。"}],
    voc:[{w:"sorry",m:"抱歉"},{w:"ordered",m:"点（过去式）"},{w:"remake",m:"重做"},{w:"patience",m:"耐心"},{w:"mistake",m:"错误"}],
-   tip:"出错先道歉 'I'm so sorry'，再给方案 'Let me…'。'Take your time' = 不着急。",task:"情景演练：假设做错一杯，用英语道歉并重做。",visa:{w:"relationship",m:"关系（夫妻）"}},
+   tip:"出错先道歉 'I'm so sorry'，再给方案 'Let me…'。'Take your time' = 不着急。",
+   task:"情景演练：假设做错一杯，用英语道歉并重做。",
+   visa:{w:"relationship",m:"关系（夫妻）"},q:"你做错了一杯，顾客有点不高兴，你第一句说什么？",a:"I'm so sorry about that – let me remake it for you right away."},
 
-  {phase:1,scene:"life",title:"日常问候与小聊",dia:[
-    {w:"你",e:"How's your day going?",z:"今天过得怎么样？"},
-    {w:"邻",e:"Not bad, thanks. And you?",z:"还行，谢谢。你呢？"},
-    {w:"你",e:"Pretty good, just busy with the shop.",z:"挺好，就是店里忙。"},
-    {w:"邻",e:"I hear it's popular!",z:"听说你店很火！"}],
+ {phase:1,scene:"life",title:"日常问候与小聊",dia:[
+   {w:"你",e:"How's your day going?",z:"今天过得怎么样？"},
+   {w:"邻",e:"Not bad, thanks. And you?",z:"还行，谢谢。你呢？"},
+   {w:"你",e:"Pretty good, just busy with the shop.",z:"挺好，就是店里忙。"},
+   {w:"邻",e:"I hear it's popular!",z:"听说你店很火！"}],
    voc:[{w:"how's",m:"…怎么样"},{w:"not bad",m:"还不错"},{w:"pretty good",m:"挺好"},{w:"busy",m:"忙"},{w:"popular",m:"受欢迎"}],
-   tip:"小聊万能三句：'How's your day?' / 'Not bad, and you?' / 'Pretty good.'",task:"今天和一位顾客或邻居用英语聊两句近况。",visa:{w:"settlement",m:"永居/定居"}},
+   tip:"小聊万能三句：'How's your day?' / 'Not bad, and you?' / 'Pretty good.'",
+   task:"今天和一位顾客或邻居用英语聊两句近况。",
+   visa:{w:"settlement",m:"永居/定居"},q:"邻居问'How's it going?'，你最自然的回答是？",a:"Pretty good, thanks! Just busy with the shop as usual."},
 
-  {phase:1,scene:"life",title:"问路",dia:[
-    {w:"你",e:"Excuse me, where is the bus stop?",z:"请问公交站在哪？"},
-    {w:"路",e:"Go straight, then turn left.",z:"直走，然后左转。"},
-    {w:"你",e:"Straight and left. Got it, thanks!",z:"直走左转，懂了，谢谢！"},
-    {w:"路",e:"You're welcome.",z:"不客气。"}],
+ {phase:1,scene:"life",title:"问路与指路",dia:[
+   {w:"你",e:"Excuse me, where is the bus stop?",z:"请问公交站在哪？"},
+   {w:"路",e:"Go straight, then turn left.",z:"直走，然后左转。"},
+   {w:"你",e:"Straight and left. Got it, thanks!",z:"直走左转，懂了，谢谢！"},
+   {w:"路",e:"You're welcome.",z:"不客气。"}],
    voc:[{w:"excuse me",m:"请问/打扰"},{w:"where is",m:"…在哪里"},{w:"straight",m:"直走"},{w:"turn left",m:"左转"},{w:"welcome",m:"不客气"}],
-   tip:"问路开头必用 'Excuse me'。方向词：straight / left / right / next to。",task:"记方向四词：straight, left, right, next to。用英语指一次路。",visa:{w:"address",m:"地址"}},
+   tip:"问路开头必用 'Excuse me'。方向词：straight / left / right / next to。",
+   task:"记方向四词：straight, left, right, next to。用英语指一次路。",
+   visa:{w:"address",m:"地址"},q:"你迷路了，怎么礼貌地向路人问火车站？",a:"Excuse me, could you tell me how to get to the train station?"},
 
-  {phase:1,scene:"life",title:"超市购物",dia:[
-    {w:"你",e:"Where can I find milk?",z:"牛奶在哪？"},
-    {w:"员",e:"It's on shelf 3, on your right.",z:"在3号货架，右手边。"},
-    {w:"你",e:"Thanks. Do you have brown sugar?",z:"谢谢，有黑糖吗？"},
-    {w:"员",e:"Yes, next to the tea.",z:"有，在茶叶旁边。"}],
-   voc:[{w:"find",m:"找"},{w:"shelf",m:"货架"},{w:"right",m:"右边"},{w:"next to",m:"在…旁边"},{w:"tea",m:"茶"}],
-   tip:"购物找物：'Where can I find…?' 比 'Where is…' 更自然。'on your right/left' 指方位。",task:"下次去超市，用英语问店员一次 'Where can I find…?'",visa:{w:"documents",m:"文件/证件"}},
+ {phase:1,scene:"life",title:"超市购物",dia:[
+   {w:"你",e:"Where can I find milk?",z:"牛奶在哪？"},
+   {w:"员",e:"It's on shelf 3, on your right.",z:"在3号货架，右手边。"},
+   {w:"你",e:"Thanks. Do you have brown sugar?",z:"谢谢，有黑糖吗？"},
+   {w:"员",e:"Yes, next to the tea.",z:"有，在茶叶旁边。"}],
+   voc:[{w:"find",m:"找"},{w:"shelf",m:"货架"},{w:"on your right",m:"在你右手边"},{w:"next to",m:"在…旁边"},{w:"have",m:"有"}],
+   tip:"找东西：'Where can I find…?' 店员答 'It's on shelf X, next to…'。",
+   task:"在超市用英语向店员问一次某样东西的位置。",
+   visa:{w:"shopping",m:"购物"},q:"你在超市找不到想要的东西，怎么问店员？",a:"Excuse me, where can I find the brown sugar, please?"},
 
-  {phase:1,scene:"life",title:"预约看病",dia:[
-    {w:"你",e:"Hello, I'd like to book an appointment.",z:"您好，我想预约。"},
-    {w:"护",e:"Sure, what's the problem?",z:"可以，哪里不舒服？"},
-    {w:"你",e:"I have a sore throat.",z:"我喉咙痛。"},
-    {w:"护",e:"OK, come at 3 p.m. tomorrow.",z:"好，明天下午3点来。"}],
-   voc:[{w:"book",m:"预约"},{w:"appointment",m:"预约（看病）"},{w:"problem",m:"问题/不适"},{w:"sore throat",m:"喉咙痛"},{w:"come",m:"来"}],
-   tip:"看病三步走：book→说症状→确认时间。症状：headache 头痛 / fever 发烧 / cough 咳嗽。",task:"背三个症状词：sore throat, headache, fever。写小纸条贴收银台。",visa:{w:"NHS",m:"英国国民医疗"}},
+ {phase:1,scene:"life",title:"餐厅点餐",dia:[
+   {w:"你",e:"A table for two, please.",z:"两位，谢谢。"},
+   {w:"服",e:"Sure, follow me.",z:"好的，跟我来。"},
+   {w:"你",e:"Could we have the menu?",z:"能给我们菜单吗？"},
+   {w:"服",e:"Here you are.",z:"给你。"}],
+   voc:[{w:"table for two",m:"两人桌"},{w:"follow me",m:"跟我来"},{w:"menu",m:"菜单"},{w:"could we",m:"我们能…吗"},{w:"here you are",m:"给你"}],
+   tip:"进餐厅：'A table for two'。要菜单：'Could we have the menu?'",
+   task:"下次下馆子，用英语要菜单和点一道菜。",
+   visa:{w:"dining",m:"就餐"},q:"服务员带位后，你怎么要菜单？",a:"Thanks. Could we have the menu, please?"},
 
-  {phase:1,scene:"life",title:"打电话预约",dia:[
-    {w:"你",e:"Hi, is this ALS Bubble Tea?",z:"嗨，是 ALS 奶茶店吗？"},
-    {w:"客",e:"No, this is the landlord.",z:"不是，我是房东。"},
-    {w:"你",e:"Oh sorry, wrong number!",z:"哦抱歉，打错了！"},
-    {w:"客",e:"No worries, bye.",z:"没事，拜拜。"}],
-   voc:[{w:"hello",m:"喂/你好"},{w:"landlord",m:"房东"},{w:"wrong number",m:"打错电话"},{w:"no worries",m:"没事"},{w:"bye",m:"拜拜"}],
-   tip:"接电话先报身份 'This is…'。打错说 'wrong number'，对方回 'No worries' 很地道。",task:"练习电话开场：'Hello, this is [名] from ALS Bubble Tea.'",visa:{w:"landlord",m:"房东"}},
+ {phase:1,scene:"life",title:"天气与季节",dia:[
+   {w:"邻",e:"Lovely weather today!",z:"今天天气真好！"},
+   {w:"你",e:"Yes, finally sunny in York.",z:"是啊，约克终于出太阳了。"},
+   {w:"邻",e:"It'll rain tomorrow, though.",z:"不过明天要下雨。"},
+   {w:"你",e:"Typical British weather!",z:"典型的英国天气！"}],
+   voc:[{w:"lovely",m:"美好"},{w:"sunny",m:"晴朗"},{w:"rain",m:"下雨"},{w:"though",m:"不过"},{w:"typical",m:"典型"}],
+   tip:"天气是英国人最爱聊的开场。'Lovely weather!' / 'Typical British weather!'",
+   task:"用英语和别人聊一次天气（sunny / rain / cold）。",
+   visa:{w:"weather",m:"天气"},q:"邻居说'Lovely weather!'，你怎么接？",a:"Yes, finally sunny in York – typical British weather though, it'll rain tomorrow!"},
 
-  {phase:1,scene:"visa",title:"谈论家庭（面试高频）",dia:[
-    {w:"官",e:"Tell me about your family.",z:"介绍一下你的家庭。"},
-    {w:"你",e:"I'm married. My wife is British.",z:"我已婚，我妻子是英国人。"},
-    {w:"官",e:"Do you have children?",z:"有孩子吗？"},
-    {w:"你",e:"No, not yet. We plan to in the future.",z:"暂时没有，将来计划要。"}],
-   voc:[{w:"married",m:"已婚"},{w:"wife",m:"妻子"},{w:"husband",m:"丈夫"},{w:"children",m:"孩子"},{w:"future",m:"未来"}],
-   tip:"配偶签面试常问家庭。准备：married / wife or husband / children / live together。",task:"用英语写 3 句介绍你的家庭，存手机备忘录背。",visa:{w:"married",m:"已婚"}},
+ {phase:1,scene:"life",title:"时间日期",dia:[
+   {w:"客",e:"What time do you close?",z:"你们几点关门？"},
+   {w:"你",e:"We close at nine pm.",z:"我们晚上九点关门。"},
+   {w:"客",e:"And are you open on Sundays?",z:"周日营业吗？"},
+   {w:"你",e:"Yes, from eleven to nine.",z:"营业，十一点到九点。"}],
+   voc:[{w:"close",m:"关门"},{w:"open",m:"开门/营业"},{w:"nine pm",m:"晚上九点"},{w:"Sunday",m:"周日"},{w:"from…to",m:"从…到"}],
+   tip:"时间：直接用数字 + am/pm。营业时间：'We're open from…to…'",
+   task:"用英语说出你店一周的营业时间。",
+   visa:{w:"hours",m:"营业时间"},q:"顾客问你们几点关门、周日开不开，你怎么答？",a:"We close at nine pm, and yes we're open on Sundays from eleven to nine."},
 
-  {phase:1,scene:"life",title:"描述日常（现在时）",dia:[
-    {w:"友",e:"What do you do every day?",z:"你每天做什么？"},
-    {w:"你",e:"I open the shop at 11 and close at 9.",z:"我11点开店，9点关店。"},
-    {w:"友",e:"That's a long day!",z:"好长的一天！"},
-    {w:"你",e:"Yes, but I enjoy it.",z:"是啊，但我挺享受。"}],
-   voc:[{w:"every day",m:"每天"},{w:"open",m:"开（店）"},{w:"close",m:"关（店）"},{w:"long day",m:"漫长一天"},{w:"enjoy",m:"享受"}],
-   tip:"现在时讲习惯：I + 动词原形。open/close/work/live 都是高频动词。",task:"用现在时列一天 3 件事：'I wake up at… / I make tea at… / I close at…'",visa:{w:"live together",m:"同居"}},
+ {phase:1,scene:"life",title:"数字与价格",dia:[
+   {w:"你",e:"That's three pounds twenty.",z:"三英镑二十便士。"},
+   {w:"客",e:"Here's a five.",z:"给你五镑。"},
+   {w:"你",e:"And your change is one eighty.",z:"找你一镑八十。"},
+   {w:"客",e:"Cheers.",z:"谢了。"}],
+   voc:[{w:"pound",m:"英镑"},{w:"pence",m:"便士"},{w:"change",m:"找零"},{w:"here's",m:"这是"},{w:"cheers",m:"谢谢/干杯"}],
+   tip:"£3.20 = 'three pounds twenty'；找零 'your change is…'。",
+   task:"用英语练习找零：£5 付 £3.20 的东西，找 £1.80。",
+   visa:{w:"money",m:"钱"},q:"顾客给五镑买三镑二十的东西，你怎么找零？",a:"Here's your change – one pound eighty, thanks!"},
 
-  {phase:1,scene:"life",title:"过去式入门（昨天）",dia:[
-    {w:"友",e:"How was your day yesterday?",z:"昨天过得怎样？"},
-    {w:"你",e:"It was busy. We sold 120 cups!",z:"很忙，我们卖了120杯！"},
-    {w:"友",e:"Wow, that's great.",z:"哇，太棒了。"},
-    {w:"你",e:"Yes, I was happy.",z:"是啊，我很开心。"}],
-   voc:[{w:"yesterday",m:"昨天"},{w:"was",m:"是（过去）"},{w:"sold",m:"卖（过去）"},{w:"great",m:"很棒"},{w:"happy",m:"开心"}],
-   tip:"过去式：am/is→was, are→were, sell→sold, go→went。讲故事必有过去式。",task:"用 'Yesterday I…' 造 3 句过去式（woke, made, sold 等）。",visa:{w:"financial",m:"财务的"}},
+ {phase:1,scene:"life",title:"预约看病",dia:[
+   {w:"你",e:"I'd like to book a doctor's appointment.",z:"我想预约看医生。"},
+   {w:"护",e:"What's the problem?",z:"什么问题？"},
+   {w:"你",e:"I've got a sore throat and a cough.",z:"我喉咙痛加咳嗽。"},
+   {w:"护",e:"We can fit you in tomorrow at ten.",z:"明天十点能安排你。"}],
+   voc:[{w:"appointment",m:"预约"},{w:"sore throat",m:"喉咙痛"},{w:"cough",m:"咳嗽"},{w:"fit you in",m:"安排进"},{w:"tomorrow",m:"明天"}],
+   tip:"看病：'I'd like to book an appointment.' 描述症状用 'I've got a…'。",
+   task:"用英语描述一次小毛病（喉咙痛/头痛/发烧）。",
+   visa:{w:"health",m:"健康"},q:"护士问'What's the problem?'，你喉咙痛加咳嗽怎么答？",a:"I've got a sore throat and a bit of a cough."},
 
-  {phase:1,scene:"life",title:"将来计划（will / going to）",dia:[
-    {w:"友",e:"What will you do next year?",z:"明年你打算做什么？"},
-    {w:"你",e:"I'm going to open a second shop.",z:"我打算开第二家店。"},
-    {w:"友",e:"Really? That's exciting!",z:"真的吗？太令人兴奋了！"},
-    {w:"你",e:"Yes, I hope so.",z:"是啊，希望如此。"}],
-   voc:[{w:"next year",m:"明年"},{w:"going to",m:"打算"},{w:"second",m:"第二"},{w:"exciting",m:"令人兴奋"},{w:"hope",m:"希望"}],
-   tip:"计划用 'I'm going to…'。'What will you do…?' 问未来。'next week/month/year' 表将来。",task:"用 'I'm going to…' 说三个未来计划（开店/学英语/旅游）。",visa:{w:"plan",m:"计划"}},
+ {phase:1,scene:"life",title:"在药店买药",dia:[
+   {w:"你",e:"Do you have anything for a cold?",z:"有治感冒的药吗？"},
+   {w:"药",e:"This one is good for congestion.",z:"这款对鼻塞有效。"},
+   {w:"你",e:"How often should I take it?",z:"多久吃一次？"},
+   {w:"药",e:"Twice a day after meals.",z:"每天两次，饭后。"}],
+   voc:[{w:"cold",m:"感冒"},{w:"congestion",m:"鼻塞"},{w:"how often",m:"多久一次"},{w:"twice a day",m:"每天两次"},{w:"after meals",m:"饭后"}],
+   tip:"买药：'Do you have anything for…?' 用法：'How often should I take it?'",
+   task:"记三个药房句型，下次买药试着用。",
+   visa:{w:"pharmacy",m:"药房"},q:"你想买治感冒的药，怎么问药剂师？",a:"Do you have anything for a cold? And how often should I take it?"},
 
-  {phase:1,scene:"life",title:"礼貌请求",dia:[
-    {w:"你",e:"Could you pass me the cup, please?",z:"能递一下杯子吗，谢谢？"},
-    {w:"员",e:"Sure, here you go.",z:"当然，给你。"},
-    {w:"你",e:"Thanks a lot!",z:"太感谢了！"},
-    {w:"员",e:"Anytime.",z:"随时。"}],
-   voc:[{w:"could you",m:"您能…吗"},{w:"please",m:"请"},{w:"here you go",m:"给你"},{w:"thanks a lot",m:"非常感谢"},{w:"anytime",m:"随时"}],
-   tip:"礼貌请求用 'Could you…, please?' 比 'Can you' 更客气，店内/面试都加分。",task:"今天对员工/家人用 'Could you…, please?' 提一个请求。",visa:{w:"request",m:"请求/申请"}},
+ {phase:1,scene:"life",title:"自我介绍",dia:[
+   {w:"新",e:"Hi, I'm Tom. Nice to meet you.",z:"嗨，我是 Tom。很高兴认识你。"},
+   {w:"你",e:"Nice to meet you too. I'm the shop owner.",z:"我也很高兴。我是店老板。"},
+   {w:"新",e:"What's your name again?",z:"你叫什么来着？"},
+   {w:"你",e:"I'm [你的名]. I run ALS Bubble Tea.",z:"我叫[你的名]，开 ALS 奶茶店。"}],
+   voc:[{w:"nice to meet you",m:"很高兴认识你"},{w:"owner",m:"老板/店主"},{w:"name",m:"名字"},{w:"run",m:"经营"},{w:"again",m:"再次"}],
+   tip:"自我介绍：'I'm… I run/own…' 一句话说清身份。",
+   task:"用英语做一段 10 秒自我介绍（名字+职业）。",
+   visa:{w:"introduce",m:"介绍"},q:"新邻居问你叫什么、做什么，你怎么答？",a:"I'm [你的名]. I run ALS Bubble Tea here in York."},
 
-  {phase:1,scene:"life",title:"数字·时间·价格",dia:[
-    {w:"你",e:"We open at eleven and close at nine.",z:"我们11点开，9点关。"},
-    {w:"客",e:"Okay, I'll come at three thirty.",z:"好，我三点半来。"},
-    {w:"你",e:"Perfect. See you then.",z:"完美，到时候见。"}],
-   voc:[{w:"eleven",m:"11"},{w:"nine",m:"9"},{w:"three thirty",m:"3:30"},{w:"perfect",m:"完美"},{w:"see you",m:"回头见"}],
-   tip:"时间：3:30 = three thirty / half past three。营业时间必会：open/close at + 数字。",task:"用英语说出营业时间，及三个常见价格（如 £4.50）。",visa:{w:"passport",m:"护照"}},
+ {phase:1,scene:"life",title:"聊家人",dia:[
+   {w:"友",e:"Do you have any kids?",z:"你有孩子吗？"},
+   {w:"你",e:"No, just me and my wife. We run the shop together.",z:"没有，就我和我太太，一起开店。"},
+   {w:"友",e:"That's lovely.",z:"真温馨。"},
+   {w:"你",e:"She's British, I'm from China.",z:"她英国人，我来自中国。"}],
+   voc:[{w:"kids",m:"孩子"},{w:"wife",m:"妻子"},{w:"together",m:"一起"},{w:"British",m:"英国人"},{w:"from China",m:"来自中国"}],
+   tip:"聊家庭：'I'm from…' 说来源；'We… together' 说共同的事。",
+   task:"用英语向别人介绍你的家庭（伴侣/来源）。",
+   visa:{w:"family",m:"家庭"},q:"朋友问你有没有孩子，你怎么自然答？",a:"No, just me and my wife – we run the shop together. She's British, I'm from China."},
 
-  {phase:1,scene:"life",title:"天气与季节",dia:[
-    {w:"邻",e:"Lovely weather today!",z:"今天天气真好！"},
-    {w:"你",e:"Yes, it's sunny and warm.",z:"是啊，阳光明媚又暖和。"},
-    {w:"邻",e:"Better than yesterday's rain.",z:"比昨天下雨好多了。"},
-    {w:"你",e:"Totally agree.",z:"完全同意。"}],
-   voc:[{w:"weather",m:"天气"},{w:"sunny",m:"晴朗"},{w:"warm",m:"暖和"},{w:"rain",m:"雨"},{w:"agree",m:"同意"}],
-   tip:"天气是英国人最爱话题。sunny/rainy/windy/cold/hot 五个词走天下。'Lovely weather!' 万能开场。",task:"和顾客聊一句天气：'Lovely weather today, isn't it?'",visa:{w:"season",m:"季节"}},
+ {phase:1,scene:"visa",title:"签证面试·家庭",dia:[
+   {w:"官",e:"Tell me about your family.",z:"讲讲你的家庭。"},
+   {w:"你",e:"I'm married to a British citizen. We live in York.",z:"我娶了一位英国公民，我们住在约克。"},
+   {w:"官",e:"How long have you been together?",z:"你们在一起多久了？"},
+   {w:"你",e:"Three years. We got married last spring.",z:"三年，去年春天结的婚。"}],
+   voc:[{w:"married",m:"已婚"},{w:"citizen",m:"公民"},{w:"together",m:"在一起"},{w:"got married",m:"结婚（过去）"},{w:"spring",m:"春天"}],
+   tip:"面试谈家庭：'I'm married to a British citizen.' 说清关系与时长。",
+   task:"用英语练一段家庭介绍，准备签证面试。",
+   visa:{w:"marriage",m:"婚姻"},q:"面试官问'Tell me about your family.'，你怎么开头？",a:"I'm married to a British citizen. We live together in York and run a bubble tea shop."},
 
-  {phase:1,scene:"life",title:"食物与喜好",dia:[
-    {w:"客",e:"Do you like British food?",z:"你喜欢英国菜吗？"},
-    {w:"你",e:"Some, but I love Chinese tea most.",z:"有些喜欢，但我最爱中国茶。"},
-    {w:"客",e:"Me too! What's your favourite?",z:"我也是！你最爱什么？"},
-    {w:"你",e:"Oolong and matcha from Taiwan.",z:"台湾的乌龙和抹茶。"}],
-   voc:[{w:"like",m:"喜欢"},{w:"love",m:"热爱"},{w:"favourite",m:"最爱"},{w:"food",m:"食物"},{w:"tea",m:"茶"}],
-   tip:"喜好句型：I like… / I love… / My favourite is…。问别人用 'Do you like…?'",task:"用三句英语说最爱的食物/饮品（练店铺主打：oolong, matcha）。",visa:{w:"favourite",m:"最喜欢的"}},
+ {phase:1,scene:"visa",title:"签证面试·关系真实",dia:[
+   {w:"官",e:"How do you keep your relationship strong?",z:"你们怎么维持感情？"},
+   {w:"你",e:"We video call every day and visit often.",z:"我们每天视频，也常互相探望。"},
+   {w:"官",e:"Do you have photos together?",z:"有合照吗？"},
+   {w:"你",e:"Yes, plenty from trips and holidays.",z:"有，旅行和过节拍了很多。"}],
+   voc:[{w:"relationship",m:"关系"},{w:"video call",m:"视频通话"},{w:"visit",m:"探望/拜访"},{w:"photos",m:"照片"},{w:"trips",m:"旅行"}],
+   tip:"证明关系真实：日常联系 + 共同回忆。'We video call every day.'",
+   task:"用英语准备'我们怎么维持关系'的回答。",
+   visa:{w:"genuine",m:"真实的"},q:"官员问'How do you keep your relationship strong?'，你怎么答？",a:"We video call every day and visit each other as often as we can."},
 
-  {phase:1,scene:"life",title:"在餐厅",dia:[
-    {w:"服",e:"A table for two?",z:"两位吗？"},
-    {w:"你",e:"Yes, by the window, please.",z:"对，靠窗的，谢谢。"},
-    {w:"服",e:"This way, please.",z:"这边请。"},
-    {w:"你",e:"Thank you.",z:"谢谢。"}],
-   voc:[{w:"table",m:"桌子"},{w:"by the window",m:"靠窗"},{w:"this way",m:"这边"},{w:"two",m:"两位"},{w:"please",m:"请"}],
-   tip:"餐厅用语：'A table for two/three?' 问人数；'This way, please' 引座。",task:"设想带朋友去餐厅，说：'A table for two, by the window.'",visa:{w:"accommodation",m:"住宿/住址"}},
+ {phase:1,scene:"life",title:"买菜与市场",dia:[
+   {w:"你",e:"How much are these strawberries?",z:"这些草莓多少钱？"},
+   {w:"贩",e:"Two pounds a box.",z:"两镑一盒。"},
+   {w:"你",e:"I'll take two boxes, please.",z:"我要两盒。"},
+   {w:"贩",e:"That's four pounds. Thanks!",z:"四镑，谢谢！"}],
+   voc:[{w:"strawberries",m:"草莓"},{w:"a box",m:"一盒"},{w:"take",m:"买/拿"},{w:"market",m:"市场"},{w:"fresh",m:"新鲜"}],
+   tip:"买菜：'How much are these…?' 数量 'I'll take two.'",
+   task:"去市场用英语问一次价格并买东西。",
+   visa:{w:"market",m:"市场"},q:"你想买两盒草莓，怎么问价并下单？",a:"How much are these strawberries? I'll take two boxes, please."},
 
-  {phase:1,scene:"life",title:"交通出行",dia:[
-    {w:"你",e:"How do I get to the station?",z:"去车站怎么走？"},
-    {w:"人",e:"Take the bus, it's number 4.",z:"坐公交，4路。"},
-    {w:"你",e:"Where's the bus stop?",z:"公交站在哪？"},
-    {w:"人",e:"Just around the corner.",z:"就在拐角处。"}],
-   voc:[{w:"station",m:"车站"},{w:"bus",m:"公交"},{w:"number",m:"号码"},{w:"corner",m:"拐角"},{w:"around",m:"在…周围"}],
-   tip:"出行：'How do I get to…?' 问路线；'Take the bus/train' 说方式；'around the corner' 很近。",task:"查家到店的地铁路线，用英语说：'Take the… to…'",visa:{w:"travel",m:"出行/旅行"}},
+ {phase:1,scene:"life",title:"取快递与邮局",dia:[
+   {w:"你",e:"I'd like to collect a parcel.",z:"我来取一个包裹。"},
+   {w:"员",e:"Can I see the code, please?",z:"能看一下取件码吗？"},
+   {w:"你",e:"Sure, it's A1234.",z:"可以，是 A1234。"},
+   {w:"员",e:"Here you go.",z:"给你。"}],
+   voc:[{w:"collect",m:"领取"},{w:"parcel",m:"包裹"},{w:"code",m:"码"},{w:"post office",m:"邮局"},{w:"here you go",m:"给你"}],
+   tip:"取件：'I'd like to collect a parcel.' 给码 'it's A1234.'",
+   task:"用英语在邮局取一次包裹或寄一次东西。",
+   visa:{w:"parcel",m:"包裹"},q:"你去邮局取包裹，怎么开口？",a:"Hi, I'd like to collect a parcel – the code is A1234."},
 
-  {phase:1,scene:"life",title:"紧急情况",dia:[
-    {w:"你",e:"Help! Call an ambulance, please!",z:"救命！请叫救护车！"},
-    {w:"人",e:"Okay, I'm calling 999 now.",z:"好，我马上打999。"},
-    {w:"你",e:"Thank you, she can't breathe.",z:"谢谢，她喘不上气。"},
-    {w:"人",e:"Stay calm, help is coming.",z:"冷静，救援来了。"}],
-   voc:[{w:"help",m:"救命/帮忙"},{w:"ambulance",m:"救护车"},{w:"call",m:"打电话"},{w:"breathe",m:"呼吸"},{w:"calm",m:"冷静"}],
-   tip:"英国急救 999 / 非紧急 101。'Call an ambulance' 是救命句，必须会。'Stay calm' 安抚用。",task:"记两个号码：999（紧急）/ 101（非紧急）。说 'Call an ambulance!'",visa:{w:"emergency",m:"紧急"}},
+ {phase:1,scene:"life",title:"坐公交与买票",dia:[
+   {w:"你",e:"A single to the city centre, please.",z:"一张到市中心的单程票。"},
+   {w:"司",e:"That's two pounds fifty.",z:"两镑五十。"},
+   {w:"你",e:"Do I tap the card here?",z:"是在这刷卡吗？"},
+   {w:"司",e:"Yes, on the reader.",z:"对，在感应器上。"}],
+   voc:[{w:"single",m:"单程票"},{w:"city centre",m:"市中心"},{w:"tap",m:"刷"},{w:"reader",m:"读卡器"},{w:"bus",m:"公交"}],
+   tip:"公交：'A single to…' 买单程；'A day ticket' 买日票。",
+   task:"用英语买一次公交/火车票。",
+   visa:{w:"travel",m:"出行"},q:"你上公交买张单程票，怎么对司机说？",a:"A single to the city centre, please. Two pounds fifty – do I tap here?"},
 
-  {phase:1,scene:"visa",title:"签证词汇专题·申请与材料",dia:[
-    {w:"官",e:"Did you submit your application online?",z:"你在线上提交申请了吗？"},
-    {w:"你",e:"Yes, with all the required evidence.",z:"是的，附齐了所有必需材料。"},
-    {w:"官",e:"Good. We'll review your documents.",z:"好，我们会审核你的文件。"},
-    {w:"你",e:"Thank you for your help.",z:"谢谢你的帮助。"}],
-   voc:[{w:"submit",m:"提交"},{w:"online",m:"线上"},{w:"required",m:"必需的"},{w:"evidence",m:"证据"},{w:"review",m:"审核"}],
-   tip:"续签核心动词：submit（提交）/ provide（提供）/ review（审核）/ approve（批准）。材料统称 documents/evidence。",task:"把签证高频词写小卡：submit, evidence, documents, approve。每天看一遍。",visa:{w:"submit",m:"提交"}},
+ {phase:1,scene:"life",title:"咖啡馆点单",dia:[
+   {w:"你",e:"A flat white, please.",z:"一杯馥芮白。"},
+   {w:"咖",e:"Anything to eat?",z:"要吃点什么吗？"},
+   {w:"你",e:"A croissant, thanks.",z:"一个可颂，谢谢。"},
+   {w:"咖",e:"Sure, that's £4.20.",z:"好，四镑二十。"}],
+   voc:[{w:"flat white",m:"馥芮白"},{w:"anything to eat",m:"要吃的吗"},{w:"croissant",m:"可颂"},{w:"to go",m:"带走"},{w:"sit in",m:"堂食"}],
+   tip:"咖啡馆：直接说饮品名；'Anything to eat?' 问小吃。",
+   task:"用英文在咖啡馆点一杯喝的加一个小吃。",
+   visa:{w:"cafe",m:"咖啡馆"},q:"咖啡师问'Anything to eat?'，你怎么点？",a:"A croissant, please. And a flat white to go."},
 
-  {phase:1,scene:"visa",title:"签证面试常见问题",dia:[
-    {w:"官",e:"When did you get married?",z:"你们什么时候结婚的？"},
-    {w:"你",e:"We got married in 2024 in China.",z:"我们2024年在中国结婚。"},
-    {w:"官",e:"How do you keep in touch?",z:"你们怎么保持联系？"},
-    {w:"你",e:"We video call every day.",z:"我们每天视频通话。"}],
-   voc:[{w:"married",m:"结婚"},{w:"keep in touch",m:"保持联系"},{w:"video call",m:"视频通话"},{w:"every day",m:"每天"},{w:"China",m:"中国"}],
-   tip:"面试必准备：结婚时间/地点、如何维持关系（video call, photos, visits）、未来共同生活计划。",task:"用英语准备两个面试答案：结婚时间 + 如何保持联系。录音练到流利。",visa:{w:"interview",m:"面试"}},
+ {phase:1,scene:"life",title:"帮忙与借东西",dia:[
+   {w:"邻",e:"Can I borrow a charger?",z:"能借个充电器吗？"},
+   {w:"你",e:"Sure, here you are.",z:"可以，给你。"},
+   {w:"邻",e:"Thanks! I'll bring it back tomorrow.",z:"谢了！明天还你。"},
+   {w:"你",e:"No rush at all.",z:"不急。"}],
+   voc:[{w:"borrow",m:"借"},{w:"charger",m:"充电器"},{w:"bring back",m:"归还"},{w:"no rush",m:"不急"},{w:"sure",m:"当然"}],
+   tip:"借东西：'Can I borrow…?' 还 'I'll bring it back.' 不急 'No rush.'",
+   task:"用英语借一次东西或借给别人东西。",
+   visa:{w:"neighbour",m:"邻居"},q:"邻居借充电器，你怎么答应并说不用急？",a:"Sure, here you are. No rush at all – bring it back whenever."},
 
-  {phase:1,scene:"life",title:"描述人与外貌",dia:[
-    {w:"你",e:"My wife has long black hair.",z:"我妻子留黑色长发。"},
-    {w:"友",e:"Is she tall?",z:"她高吗？"},
-    {w:"你",e:"No, she's medium height.",z:"不，她中等身高。"},
-    {w:"友",e:"I see, very nice.",z:"明白了，挺好。"}],
-   voc:[{w:"hair",m:"头发"},{w:"tall",m:"高"},{w:"medium height",m:"中等身高"},{w:"short",m:"矮/短"},{w:"nice",m:"好"}],
-   tip:"描述人：hair（头发）/ height（身高）/ wear glasses（戴眼镜）。'medium height' 比 short/tall 常用。",task:"用英语描述一位家人或员工的外貌（3 句话）。",visa:{w:"photograph",m:"照片"}},
+ {phase:1,scene:"life",title:"紧急情况求助",dia:[
+   {w:"你",e:"Excuse me, I need help.",z:"打扰，我需要帮助。"},
+   {w:"路",e:"What's wrong?",z:"怎么了？"},
+   {w:"你",e:"I locked myself out of my shop.",z:"我把店门锁外面了。"},
+   {w:"路",e:"Call the landlord, or 999 if urgent.",z:"联系房东，急就打 999。"}],
+   voc:[{w:"help",m:"帮助"},{w:"wrong",m:"不对/出问题"},{w:"locked out",m:"锁门外"},{w:"landlord",m:"房东"},{w:"urgent",m:"紧急"}],
+   tip:"求助：'I need help.' 说清问题；英国紧急 999。",
+   task:"用英语说两种紧急情况该怎么求助。",
+   visa:{w:"emergency",m:"紧急情况"},q:"你被锁在店门外，怎么向路人求助？",a:"Excuse me, I need help – I've locked myself out of my shop."},
 
-  {phase:1,scene:"life",title:"购物退换货",dia:[
-    {w:"客",e:"I want to return this cup.",z:"我想退这个杯子。"},
-    {w:"你",e:"Sure, do you have the receipt?",z:"可以，有收据吗？"},
-    {w:"客",e:"Yes, here it is.",z:"有，在这。"},
-    {w:"你",e:"No problem, I'll refund you.",z:"没问题，我退款给你。"}],
-   voc:[{w:"return",m:"退货"},{w:"receipt",m:"收据"},{w:"refund",m:"退款"},{w:"here it is",m:"在这"},{w:"problem",m:"问题"}],
-   tip:"退换货：return（退）/ exchange（换）/ refund（退款）/ receipt（收据）。店员也要会。",task:"练退货对话：'I want to return this. Do you have the receipt?'",visa:{w:"refund",m:"退款"}},
+ {phase:1,scene:"life",title:"夸奖与回应",dia:[
+   {w:"客",e:"Your English is really good!",z:"你英语真不错！"},
+   {w:"你",e:"Thank you! I'm still learning.",z:"谢谢！我还在学。"},
+   {w:"客",e:"Well, you're doing great.",z:"你做得很好啦。"},
+   {w:"你",e:"That means a lot, thanks.",z:"这话真暖心，谢了。"}],
+   voc:[{w:"really good",m:"真棒"},{w:"still learning",m:"还在学"},{w:"doing great",m:"做得好"},{w:"means a lot",m:"很有意义"},{w:"praise",m:"夸奖"}],
+   tip:"被夸：'Thank you! I'm still learning.' 谦虚又自然。",
+   task:"用英语接受一次夸奖并谦虚回应。",
+   visa:{w:"confidence",m:"自信"},q:"顾客夸你英语好，你怎么答？",a:"Thank you! I'm still learning, but that means a lot."},
 
-  {phase:1,scene:"life",title:"爱好与休闲",dia:[
-    {w:"友",e:"What do you do for fun?",z:"你平时怎么放松？"},
-    {w:"你",e:"I enjoy making tea and walking.",z:"我喜欢泡茶和散步。"},
-    {w:"友",e:"Nice! I like cooking.",z:"不错！我喜欢做饭。"},
-    {w:"你",e:"We should cook together!",z:"我们该一起做饭！"}],
-   voc:[{w:"fun",m:"乐趣"},{w:"enjoy",m:"享受"},{w:"walking",m:"散步"},{w:"cooking",m:"做饭"},{w:"together",m:"一起"}],
-   tip:"爱好句型：I enjoy + 动词-ing / I like + 动词-ing。'for fun' = 为了消遣。",task:"用 'I enjoy…' 说两个爱好（可加 making tea）。",visa:{w:"hobby",m:"爱好"}},
+ {phase:1,scene:"life",title:"约时间碰面",dia:[
+   {w:"友",e:"Shall we meet this weekend?",z:"这周末见一面？"},
+   {w:"你",e:"Sure! Saturday afternoon works.",z:"好啊！周六下午可以。"},
+   {w:"友",e:"Great, see you at two.",z:"好，两点见。"},
+   {w:"你",e:"See you then!",z:"到时候见！"}],
+   voc:[{w:"meet",m:"见面"},{w:"weekend",m:"周末"},{w:"works",m:"可以/合适"},{w:"Saturday",m:"周六"},{w:"see you",m:"回头见"}],
+   tip:"约时间：'Shall we…?' 提议；'…works' 表示某个时间合适。",
+   task:"用英语约一次朋友见面。",
+   visa:{w:"social",m:"社交"},q:"朋友提议周末见，你定周六下午怎么答？",a:"Sure! Saturday afternoon works for me – see you at two."},
 
-  {phase:1,scene:"visa",title:"工作与生意（店铺）",dia:[
-    {w:"官",e:"Tell me about your business.",z:"说说你的生意。"},
-    {w:"你",e:"I run a bubble tea shop in York.",z:"我在约克开了一家奶茶店。"},
-    {w:"官",e:"How is it going?",z:"经营得如何？"},
-    {w:"你",e:"It's growing. We get busier each month.",z:"在成长，生意一个月比一个月好。"}],
-   voc:[{w:"business",m:"生意"},{w:"run",m:"经营"},{w:"shop",m:"店铺"},{w:"growing",m:"成长中"},{w:"busier",m:"更忙/更好"}],
-   tip:"聊生意：run a shop / own a business / It's growing。面试可证明扎根英国。",task:"准备一段 30 秒自我介绍：你是谁、做什么生意、在哪里。",visa:{w:"self-employed",m:"自雇"}},
+ {phase:1,scene:"life",title:"表达喜欢与不喜欢",dia:[
+   {w:"友",e:"Do you like Yorkshire tea?",z:"你喜欢约克郡茶吗？"},
+   {w:"你",e:"I love it! But I'm not keen on coffee.",z:"超爱！但不太喜欢咖啡。"},
+   {w:"友",e:"Really? I'm the opposite.",z:"真的？我正相反。"},
+   {w:"你",e:"Ha, different tastes!",z:"哈，口味不同！"}],
+   voc:[{w:"love",m:"爱"},{w:"not keen on",m:"不太喜欢"},{w:"opposite",m:"相反"},{w:"taste",m:"口味"},{w:"really",m:"真的"}],
+   tip:"喜好：'I love…' / 'I'm not keen on…' / 'I'm the opposite.'",
+   task:"用英语说三样你喜欢和两样你不喜欢的。",
+   visa:{w:"preference",m:"偏好"},q:"朋友问你喜欢约克郡茶吗，你怎么答？",a:"I love it! But I'm not keen on coffee – different tastes, I guess."},
 
-  {phase:1,scene:"life",title:"复习①·综合对话（店内）",dia:[
-    {w:"客",e:"One brown sugar milk tea, large, no ice.",z:"一杯黑糖奶茶，大杯，无冰。"},
-    {w:"你",e:"Sure, that's £5. Tap here, please.",z:"好的，5英镑，请这边刷。"},
-    {w:"客",e:"Done. For here, thanks.",z:"付好了，堂食，谢谢。"},
-    {w:"你",e:"Great, five minutes. Enjoy!",z:"好，五分钟，请慢用！"}],
-   voc:[{w:"one",m:"一杯"},{w:"no ice",m:"无冰"},{w:"done",m:"好了/付完"},{w:"enjoy",m:"请享用"},{w:"great",m:"好"}],
-   tip:"复习日：把第2、4、5天句型串成完整点单流程，店里每天真用得上。",task:"完整走一遍点单：尺寸→糖度→冰量→价格→支付→堂食/外带。",visa:{w:"renew",m:"续签"}},
+ {phase:2,scene:"shop",title:"电话订货补货",dia:[
+   {w:"你",e:"Hi, it's the owner of ALS Bubble Tea calling.",z:"你好，我是 ALS 奶茶店老板。"},
+   {w:"供",e:"Hi, how can I help?",z:"你好，有什么能帮？"},
+   {w:"你",e:"I'd like to reorder 10kg of pearls, please.",z:"我想再订 10 公斤珍珠。"},
+   {w:"供",e:"Sure, I'll send it out today.",z:"好，今天发出。"}],
+   voc:[{w:"reorder",m:"再订购"},{w:"supplier",m:"供应商"},{w:"kg",m:"公斤"},{w:"send out",m:"发出"},{w:"owner",m:"老板"}],
+   tip:"电话订货：自报身份 + 'I'd like to reorder…'。",
+   task:"用英语打一通模拟订货电话。",
+   visa:{w:"business",m:"生意"},q:"你给供应商打电话再订珍珠，开头怎么说？",a:"Hi, it's the owner of ALS Bubble Tea – I'd like to reorder 10kg of pearls, please."},
 
-  {phase:1,scene:"visa",title:"复习②·续签路径与口语模板",dia:[
-    {w:"你",e:"I passed A1, now I need A2 for renewal.",z:"我过了A1，现在续签需要A2。"},
-    {w:"友",e:"Right, and B1 later for settlement?",z:"对，之后永居要B1？"},
-    {w:"你",e:"Exactly. I study a little every day.",z:"没错，我每天学一点。"},
-    {w:"友",e:"That's the way!",z:"这就对了！"}],
-   voc:[{w:"passed",m:"通过（过去）"},{w:"renewal",m:"续签"},{w:"settlement",m:"永居"},{w:"every day",m:"每天"},{w:"way",m:"方法/路"}],
-   tip:"复习日：把签证路径说顺——A1✅→A2（续签FLR M）→B1（永居ILR）。'I study a little every day' 体现持续努力。",task:"用英文向朋友解释一遍签证路径与目标（A1→A2→B1）。",visa:{w:"ILR",m:"永居（无限期居留）"}},
+ {phase:2,scene:"shop",title:"安抚愤怒顾客",dia:[
+   {w:"客",e:"I've been waiting twenty minutes!",z:"我都等了二十分钟了！"},
+   {w:"你",e:"You're right to be upset. I'm so sorry.",z:"你生气有道理，真抱歉。"},
+   {w:"客",e:"This is unacceptable.",z:"这没法接受。"},
+   {w:"你",e:"Your drink is free today. Let me make it now.",z:"这杯今天免费，我马上做。"}],
+   voc:[{w:"waiting",m:"等待"},{w:"upset",m:"生气/难过"},{w:"unacceptable",m:"无法接受"},{w:"free",m:"免费"},{w:"right to be",m:"有理由"}],
+   tip:"安抚：先认可情绪 'You're right to be upset'，再给补偿。",
+   task:"用英语演练安抚一位等太久的顾客。",
+   visa:{w:"complaint",m:"投诉"},q:"顾客发脾气说等太久，你第一句怎么稳住他？",a:"You're absolutely right to be upset – I'm so sorry, let me fix this now."},
 
-  /* ===== 阶段二 B1 流畅 ===== */
-  {phase:2,scene:"shop",title:"电话订货·联系供应商",dia:[
-    {w:"你",e:"Hi, I'd like to order more cups and straws.",z:"嗨，我想再订些杯子和吸管。"},
-    {w:"供",e:"Sure, how many of each?",z:"可以，各要多少？"},
-    {w:"你",e:"500 cups and 1000 straws, please.",z:"500个杯，1000根吸管。"},
-    {w:"供",e:"Great, I'll send them tomorrow.",z:"好，明天发。"}],
-   voc:[{w:"order",m:"订购"},{w:"supplier",m:"供应商"},{w:"each",m:"每个"},{w:"send",m:"发送/寄"},{w:"tomorrow",m:"明天"}],
-   tip:"订货：'I'd like to order…' / 'How many of each?' 商务电话基础。",task:"用英语写一句订货需求存备忘录：'I'd like to order 500 cups, please.'",visa:{w:"order",m:"订单"}},
+ {phase:2,scene:"shop",title:"谈批发折扣",dia:[
+   {w:"你",e:"If I order 200 units, any discount?",z:"如果我订 200 件，有折扣吗？"},
+   {w:"供",e:"I can do five percent off.",z:"可以给你 95 折。"},
+   {w:"你",e:"Could you make it ten? I'm a regular.",z:"能到九折吗？我是老客户。"},
+   {w:"供",e:"Alright, ten percent for you.",z:"行，给你九折。"}],
+   voc:[{w:"units",m:"件/单位"},{w:"discount",m:"折扣"},{w:"percent",m:"百分比"},{w:"regular",m:"常客"},{w:"deal",m:"交易"}],
+   tip:"砍价：'If I order X, any discount?' 再 'Could you make it…?'",
+   task:"用英语谈一次折扣，争取更好价格。",
+   visa:{w:"negotiate",m:"谈判"},q:"你想谈批发价，怎么开口要折扣？",a:"If I order 200 units, is there any discount you can offer?"},
 
-  {phase:2,scene:"shop",title:"处理愤怒顾客",dia:[
-    {w:"客",e:"This is unacceptable! I waited 20 minutes!",z:"这不能接受！我等了20分钟！"},
-    {w:"你",e:"You're absolutely right, I'm so sorry.",z:"您完全对，我太抱歉了。"},
-    {w:"客",e:"Make it right, please.",z:"请给我个交代。"},
-    {w:"你",e:"Your drink is free today, and here's a voucher.",z:"今天这杯免单，这是优惠券。"}],
-   voc:[{w:"unacceptable",m:"不可接受"},{w:"wait",m:"等待"},{w:"right",m:"对的"},{w:"free",m:"免费"},{w:"voucher",m:"代金券"}],
-   tip:"安抚愤怒顾客：先认错 'You're right' → 再补偿方案。别争辩。",task:"背下安抚句：'You're absolutely right, I'm so sorry about the wait.'",visa:{w:"complaint",m:"投诉"}},
+ {phase:2,scene:"life",title:"表达同意与不同意",dia:[
+   {w:"友",e:"Tea is better than coffee.",z:"茶比咖啡好。"},
+   {w:"你",e:"I see what you mean, but I prefer coffee.",z:"我懂你的意思，但我更爱咖啡。"},
+   {w:"友",e:"Fair enough!",z:"说得也是！"},
+   {w:"你",e:"We can agree to disagree.",z:"咱求同存异吧。"}],
+   voc:[{w:"see what you mean",m:"懂你意思"},{w:"prefer",m:"更喜欢"},{w:"fair enough",m:"有道理"},{w:"agree to disagree",m:"求同存异"},{w:"opinion",m:"观点"}],
+   tip:"不同意：'I see what you mean, but…' 委婉；'agree to disagree' 收尾。",
+   task:"用英语练习委婉表达一次不同意。",
+   visa:{w:"opinion",m:"观点"},q:"别人说'茶比咖啡好'，你不同意怎么委婉回？",a:"I see what you mean, but I actually prefer coffee in the morning."},
 
-  {phase:2,scene:"life",title:"预约各类服务",dia:[
-    {w:"你",e:"Hi, I'd like to book a haircut for Saturday.",z:"嗨，我想约周六理发。"},
-    {w:"员",e:"Morning or afternoon?",z:"上午还是下午？"},
-    {w:"你",e:"Afternoon, around two?",z:"下午，两点左右？"},
-    {w:"员",e:"Perfect, see you then.",z:"好，到时候见。"}],
-   voc:[{w:"haircut",m:"理发"},{w:"Saturday",m:"周六"},{w:"morning",m:"上午"},{w:"afternoon",m:"下午"},{w:"book",m:"预约"}],
-   tip:"预约万能：'I'd like to book… for + 时间'。确认用 'Morning or afternoon?'",task:"用英语约一次理发/修东西/银行，套用模板。",visa:{w:"appointment",m:"预约"}},
+ {phase:2,scene:"life",title:"给建议",dia:[
+   {w:"友",e:"The shop is exhausting me.",z:"开店快把我累垮了。"},
+   {w:"你",e:"Why don't you hire a part-timer?",z:"你干嘛不雇个兼职？"},
+   {w:"友",e:"Maybe I should.",z:"也许该。"},
+   {w:"你",e:"It would take the pressure off you.",z:"能帮你减压。"}],
+   voc:[{w:"exhausting",m:"令人筋疲力尽"},{w:"hire",m:"雇佣"},{w:"part-timer",m:"兼职"},{w:"pressure",m:"压力"},{w:"should",m:"应该"}],
+   tip:"给建议：'Why don't you…?' / 'You should…' / 'Have you tried…?'",
+   task:"用英语给朋友一个建议。",
+   visa:{w:"advice",m:"建议"},q:"朋友说生意累，你建议他雇人，怎么说？",a:"Why don't you hire a part-timer? It would take a lot of pressure off you."},
 
-  {phase:2,scene:"life",title:"表达意见",dia:[
-    {w:"友",e:"What do you think of York?",z:"你觉得约克怎么样？"},
-    {w:"你",e:"Personally, I think it's a lovely city.",z:"就我个人看，我觉得这城市很可爱。"},
-    {w:"友",e:"Me too, very peaceful.",z:"我也是，很宁静。"},
-    {w:"你",e:"In my opinion, it's perfect for a shop.",z:"我认为开店的完美地点。"}],
-   voc:[{w:"think",m:"认为"},{w:"personally",m:"就个人而言"},{w:"lovely",m:"可爱的"},{w:"opinion",m:"意见"},{w:"peaceful",m:"宁静的"}],
-   tip:"表达意见：I think… / In my opinion… / Personally, I…。比 'I like' 高级。",task:"用 'In my opinion…' 说一个对约克/奶茶生意的看法。",visa:{w:"opinion",m:"意见"}},
+ {phase:2,scene:"life",title:"讲过去经历",dia:[
+   {w:"友",e:"How did you start the shop?",z:"你是怎么开起店的？"},
+   {w:"你",e:"I saved for two years, then found this spot.",z:"我攒了两年钱，然后找到这铺位。"},
+   {w:"友",e:"That's brave.",z:"真勇敢。"},
+   {w:"你",e:"It was scary, but the best decision.",z:"当时怕，但最对的决定。"}],
+   voc:[{w:"start",m:"开始"},{w:"saved",m:"攒钱（过去）"},{w:"spot",m:"地点/铺位"},{w:"brave",m:"勇敢"},{w:"scary",m:"可怕"}],
+   tip:"过去式：'I saved… then found…' 用动词过去式讲经历。",
+   task:"用英语讲一段你开店的过去经历。",
+   visa:{w:"experience",m:"经历"},q:"朋友问你怎么开店的，你怎么讲？",a:"I saved for two years, then found this spot in York – it was scary but the best decision."},
 
-  {phase:2,scene:"life",title:"同意与不同意",dia:[
-    {w:"友",e:"British weather is terrible, isn't it?",z:"英国天气糟透了，对吧？"},
-    {w:"你",e:"I see what you mean, but I quite like it.",z:"我懂你意思，但我挺喜欢的。"},
-    {w:"友",e:"Really?",z:"真的？"},
-    {w:"你",e:"Well, I don't fully agree – the rain keeps it green.",z:"嗯，我不完全同意，雨让它很绿。"}],
-   voc:[{w:"see what you mean",m:"懂你意思"},{w:"quite",m:"相当"},{w:"really",m:"真的"},{w:"agree",m:"同意"},{w:"fully",m:"完全"}],
-   tip:"委婉不同意：'I see what you mean, but…' / 'I don't fully agree.' 比直接说 no 礼貌。",task:"练一个委婉不同意：'I see your point, but I think…'",visa:{w:"disagree",m:"不同意"}},
+ {phase:2,scene:"life",title:"计划与安排",dia:[
+   {w:"你",e:"We're launching a new menu next month.",z:"我们下月推新菜单。"},
+   {w:"友",e:"Exciting! What's the plan?",z:"赞！什么计划？"},
+   {w:"你",e:"We'll promote it on the apps first.",z:"先在外卖平台推。"},
+   {w:"友",e:"Smart move.",z:"聪明。"}],
+   voc:[{w:"launch",m:"推出/发布"},{w:"next month",m:"下月"},{w:"plan",m:"计划"},{w:"promote",m:"推广"},{w:"smart",m:"聪明"}],
+   tip:"计划：'We're going to…' / 'We'll… first' 说步骤。",
+   task:"用英语讲一个你近期的小计划。",
+   visa:{w:"plan",m:"计划"},q:"你打算下月推新菜单，怎么告诉朋友？",a:"We're launching a new menu next month – we'll promote it on the delivery apps first."},
 
-  {phase:2,scene:"life",title:"讲经历故事（过去时）",dia:[
-    {w:"友",e:"Any funny stories from the shop?",z:"店里有什么好笑的事吗？"},
-    {w:"你",e:"Once a tourist ordered in Chinese by accident!",z:"有次游客不小心用中文点单！"},
-    {w:"友",e:"Haha, that's funny.",z:"哈哈，好笑。"},
-    {w:"你",e:"We both laughed and he became a regular.",z:"我们都笑了，后来他成了常客。"}],
-   voc:[{w:"once",m:"曾经"},{w:"tourist",m:"游客"},{w:"funny",m:"好笑的"},{w:"laughed",m:"笑（过去）"},{w:"regular",m:"常客"}],
-   tip:"讲故事用 once / last week / when I… 开头，动词用过去式。生动才像聊天。",task:"用英语讲一件店里真事（3-4句过去式）。",visa:{w:"story",m:"故事"}},
+ {phase:2,scene:"life",title:"谈论健康与养生",dia:[
+   {w:"友",e:"I've been sleeping badly lately.",z:"我最近睡得差。"},
+   {w:"你",e:"Have you tried cutting down on screens?",z:"你试过少看屏幕吗？"},
+   {w:"友",e:"Not really.",z:"没怎么。"},
+   {w:"你",e:"A walk before bed helps me a lot.",z:"我睡前散步很有用。"}],
+   voc:[{w:"sleeping",m:"睡眠"},{w:"lately",m:"最近"},{w:"cut down",m:"减少"},{w:"screens",m:"屏幕"},{w:"walk",m:"散步"}],
+   tip:"健康话题：'Have you tried…?' 给建议；'helps me a lot' 说效果。",
+   task:"用英语聊一次健康或作息。",
+   visa:{w:"wellbeing",m:"健康"},q:"朋友说睡不好，你建议少看屏幕怎么讲？",a:"Have you tried cutting down on screens before bed? A walk helps me a lot."},
 
-  {phase:2,scene:"life",title:"描述变化（比较过去现在）",dia:[
-    {w:"友",e:"Has the shop changed much?",z:"店变化大吗？"},
-    {w:"你",e:"A lot! We used to sell 50 a day, now 200.",z:"很大！以前一天50杯，现在200。"},
-    {w:"友",e:"Wow, that's growth!",z:"哇，增长啊！"},
-    {w:"你",e:"Yes, it's got much busier.",z:"对，忙多了。"}],
-   voc:[{w:"used to",m:"过去常常"},{w:"change",m:"变化"},{w:"growth",m:"增长"},{w:"busier",m:"更忙"},{w:"now",m:"现在"}],
-   tip:"比较变化：used to + 动词 / now… / It's got + 比较级。",task:"用 'We used to… now we…' 说店铺变化。",visa:{w:"change",m:"变化"}},
+ {phase:2,scene:"life",title:"聊孩子与教育",dia:[
+   {w:"友",e:"Schools here are quite good.",z:"这的学校挺好。"},
+   {w:"你",e:"Yes, but the fees worry me a bit.",z:"是，但费用有点让我担心。"},
+   {w:"友",e:"State schools are free, though.",z:"不过公立学校免费。"},
+   {w:"你",e:"Good to know, thanks.",z:"学到了，谢。"}],
+   voc:[{w:"schools",m:"学校"},{w:"fees",m:"费用"},{w:"worry",m:"担心"},{w:"state school",m:"公立学校"},{w:"free",m:"免费"}],
+   tip:"教育：'the fees worry me' 说顾虑；'state schools are free' 是知识点。",
+   task:"用英语聊一次教育或费用话题。",
+   visa:{w:"children",m:"孩子"},q:"朋友说英国学校好，你顾虑费用怎么答？",a:"Yes, but the school fees worry me a bit – though I hear state schools are free."},
 
-  {phase:2,scene:"life",title:"给建议",dia:[
-    {w:"友",e:"I'm so tired of running the shop alone.",z:"一个人开店太累了。"},
-    {w:"你",e:"Why don't you hire a part-timer?",z:"你为什么不雇个兼职？"},
-    {w:"友",e:"Good idea, maybe I should.",z:"好主意，也许该。"},
-    {w:"你",e:"You should definitely try it.",z:"你绝对该试试。"}],
-   voc:[{w:"hire",m:"雇佣"},{w:"part-timer",m:"兼职"},{w:"idea",m:"主意"},{w:"should",m:"应该"},{w:"try",m:"尝试"}],
-   tip:"给建议：You should… / Why don't you… / I'd suggest…。",task:"用 'You should…' 给朋友一个真实建议。",visa:{w:"advice",m:"建议"}},
+ {phase:2,scene:"life",title:"社交邀约",dia:[
+   {w:"你",e:"We're having a small party at the shop.",z:"我们店要办个小聚会。"},
+   {w:"友",e:"Sounds fun! Can I bring a friend?",z:"听起来好玩！能带朋友吗？"},
+   {w:"你",e:"Of course, the more the merrier!",z:"当然，越多越热闹！"},
+   {w:"友",e:"Count me in.",z:"算我一个。"}],
+   voc:[{w:"party",m:"聚会"},{w:"bring",m:"带"},{w:"the more the merrier",m:"越多越热闹"},{w:"count me in",m:"算我一个"},{w:"fun",m:"好玩"}],
+   tip:"邀约：'We're having…' 邀请；'the more the merrier' 欢迎带人。",
+   task:"用英语邀请朋友参加一次活动。",
+   visa:{w:"invite",m:"邀请"},q:"朋友问能不能带人，你欢迎怎么说？",a:"Of course! The more the merrier – count me in, see you there."},
 
-  {phase:2,scene:"life",title:"看医生·描述病程",dia:[
-    {w:"医",e:"How long have you felt like this?",z:"这种感觉多久了？"},
-    {w:"你",e:"Since last Tuesday, about a week.",z:"从上周二，大概一周。"},
-    {w:"医",e:"Any other symptoms?",z:"有别的症状吗？"},
-    {w:"你",e:"A bit of dizziness in the morning.",z:"早上有点晕。"}],
-   voc:[{w:"since",m:"自从"},{w:"felt",m:"感觉（过去）"},{w:"symptom",m:"症状"},{w:"dizziness",m:"头晕"},{w:"morning",m:"早晨"}],
-   tip:"病程：'Since + 时间' / 'for + 时长'。symptom 是症状统称。",task:"用 'I've had… since…' 描述一个不适。",visa:{w:"symptom",m:"症状"}},
+ {phase:2,scene:"life",title:"解释误会",dia:[
+   {w:"友",e:"You seemed annoyed yesterday.",z:"你昨天好像不高兴。"},
+   {w:"你",e:"Oh, that wasn't about you, I was just tired.",z:"哦，那不是因为你，我只是累了。"},
+   {w:"友",e:"Ah, I get it now.",z:"啊，懂了。"},
+   {w:"你",e:"Sorry if I came across wrong.",z:"若我看起来不对，抱歉。"}],
+   voc:[{w:"annoyed",m:"恼火"},{w:"about you",m:"关于你"},{w:"tired",m:"累"},{w:"came across",m:"给人感觉"},{w:"sorry",m:"抱歉"}],
+   tip:"解释误会：'that wasn't about you' 划清；'sorry if I came across…' 道歉。",
+   task:"用英语解释一次小误会。",
+   visa:{w:"misunderstanding",m:"误会"},q:"朋友以为你昨天生他气，你怎么解释？",a:"Oh, that wasn't about you – I was just tired. Sorry if I came across wrong."},
 
-  {phase:2,scene:"visa",title:"聊孩子与家庭计划",dia:[
-    {w:"官",e:"Do you plan to have children in the UK?",z:"计划在英国生孩子吗？"},
-    {w:"你",e:"Yes, we hope to start a family soon.",z:"是，我们希望很快组建家庭。"},
-    {w:"官",e:"That's lovely. Any concerns?",z:"真好，有顾虑吗？"},
-    {w:"你",e:"Just the usual – housing and costs.",z:"就常规的——住房和生活费。"}],
-   voc:[{w:"plan",m:"计划"},{w:"start a family",m:"组建家庭"},{w:"soon",m:"很快"},{w:"concern",m:"顾虑"},{w:"housing",m:"住房"}],
-   tip:"家庭计划：start a family / hope to / concerns。面试展现稳定规划。",task:"用英语准备'是否要孩子'的面试答案。",visa:{w:"family",m:"家庭"}},
+ {phase:2,scene:"shop",title:"培训新员工",dia:[
+   {w:"你",e:"First, always greet with a smile.",z:"首先，永远微笑迎客。"},
+   {w:"员",e:"Got it. What about the sizes?",z:"懂。杯型呢？"},
+   {w:"你",e:"Medium, large, then ask about sugar and ice.",z:"中杯大杯，再问糖度和冰。"},
+   {w:"员",e:"Makes sense, thanks!",z:"有道理，谢！"}],
+   voc:[{w:"greet",m:"迎接"},{w:"smile",m:"微笑"},{w:"train",m:"培训"},{w:"makes sense",m:"有道理"},{w:"staff",m:"员工"}],
+   tip:"培训：用祈使句 'First… then…' 讲步骤清晰。",
+   task:"用英语给新员工讲一遍点单流程。",
+   visa:{w:"staff",m:"员工"},q:"你培训新员工点单，怎么讲步骤？",a:"First greet with a smile, then ask size, sugar and ice – medium or large?"},
 
-  {phase:2,scene:"visa",title:"聊工作与员工管理",dia:[
-    {w:"官",e:"Do you manage anyone at the shop?",z:"店里你管人吗？"},
-    {w:"你",e:"Yes, I train two part-time staff.",z:"管，我培训两名兼职。"},
-    {w:"官",e:"Sounds like real responsibility.",z:"听起来真有责任感。"},
-    {w:"你",e:"It is, and I enjoy teaching them.",z:"是啊，而且我喜欢教他们。"}],
-   voc:[{w:"manage",m:"管理"},{w:"train",m:"培训"},{w:"staff",m:"员工"},{w:"responsibility",m:"责任"},{w:"teach",m:"教"}],
-   tip:"管理表达：manage / train staff / responsibility。证明你在英扎根。",task:"用英语说你怎么管店里员工。",visa:{w:"manage",m:"管理"}},
+ {phase:2,scene:"shop",title:"面试招人",dia:[
+   {w:"你",e:"Why do you want this job?",z:"你为什么想做这份工？"},
+   {w:"应",e:"I love bubble tea and people.",z:"我爱奶茶也爱和人打交道。"},
+   {w:"你",e:"Good. Can you work weekends?",z:"好。周末能来吗？"},
+   {w:"应",e:"Yes, every weekend.",z:"能，每个周末。"}],
+   voc:[{w:"job",m:"工作"},{w:"want",m:"想要"},{w:"people",m:"人"},{w:"weekends",m:"周末"},{w:"interview",m:"面试"}],
+   tip:"招人：'Why do you want…?' 'Can you work…?' 标准问题。",
+   task:"用英语演练一次招人面试。",
+   visa:{w:"hire",m:"雇佣"},q:"你面试应聘者，怎么问动机和可用性？",a:"Why do you want this job, and can you work weekends?"},
 
-  {phase:2,scene:"life",title:"社交邀约",dia:[
-    {w:"你",e:"Would you like to come for a tea tasting?",z:"想来参加个品茶吗？"},
-    {w:"友",e:"I'd love to! When?",z:"太想了！什么时候？"},
-    {w:"你",e:"This Saturday afternoon, if you're free.",z:"这周六下午，有空的话。"},
-    {w:"友",e:"Perfect, count me in.",z:"好，算我一个。"}],
-   voc:[{w:"would you like",m:"你想…吗"},{w:"tasting",m:"品鉴"},{w:"free",m:"有空"},{w:"count me in",m:"算我一个"},{w:"love to",m:"很想"}],
-   tip:"邀约：'Would you like to…?' / 'if you're free'。接受：'Count me in.'",task:"用 'Would you like to…?' 邀一位朋友来店里坐坐。",visa:{w:"invite",m:"邀请"}},
+ {phase:2,scene:"shop",title:"投诉供应商",dia:[
+   {w:"你",e:"The last batch was expired.",z:"上一批货过期了。"},
+   {w:"供",e:"I'm sorry to hear that.",z:"很抱歉听到。"},
+   {w:"你",e:"Please check quality before sending.",z:"发货前请检查质量。"},
+   {w:"供",e:"We'll tighten our checks.",z:"我们会加强检查。"}],
+   voc:[{w:"batch",m:"批次"},{w:"expired",m:"过期"},{w:"quality",m:"质量"},{w:"tighten",m:"加强"},{w:"checks",m:"检查"}],
+   tip:"投诉：说事实 'The last batch was…' 再提要求。",
+   task:"用英语写一条对供应商的投诉。",
+   visa:{w:"quality",m:"质量"},q:"你收到的货过期了，怎么投诉供应商？",a:"The last batch was expired – please check quality before sending next time."},
 
-  /* ===== 阶段三 B2 自在 ===== */
-  {phase:3,scene:"life",title:"聊新闻与时事观点",dia:[
-    {w:"友",e:"Did you hear about the new tax for small shops?",z:"你听说小店新税的事吗？"},
-    {w:"你",e:"Yes, it's a bit worrying, to be honest.",z:"听了，说实话有点让人担心。"},
-    {w:"友",e:"I know, it might hit us hard.",z:"是啊，可能重创我们。"},
-    {w:"你",e:"Let's hope they reconsider before it starts.",z:"希望实施前他们会重新考虑。"}],
-   voc:[{w:"tax",m:"税"},{w:"worrying",m:"令人担忧"},{w:"to be honest",m:"说实话"},{w:"hit hard",m:"重创"},{w:"reconsider",m:"重新考虑"}],
-   tip:"谈时事：'to be honest' / 'it might affect us'。B2 能聊抽象话题。",task:"用 'To be honest, I think…' 对一个新闻说看法。",visa:{w:"news",m:"新闻"}},
+ {phase:2,scene:"life",title:"银行开户",dia:[
+   {w:"你",e:"I'd like to open a business account.",z:"我想开个对公账户。"},
+   {w:"员",e:"Do you have your ID and proof of address?",z:"有身份证和地址证明吗？"},
+   {w:"你",e:"Yes, here they are.",z:"有，都在这。"},
+   {w:"员",e:"We'll set it up today.",z:"今天就能办好。"}],
+   voc:[{w:"account",m:"账户"},{w:"business",m:"商务/对公"},{w:"ID",m:"身份证"},{w:"proof of address",m:"地址证明"},{w:"set up",m:"设立"}],
+   tip:"银行：'open an account'；准备 'ID and proof of address'。",
+   task:"用英语准备开一次银行账户。",
+   visa:{w:"bank",m:"银行"},q:"你去银行开对公账户，怎么开口？",a:"I'd like to open a business account – here's my ID and proof of address."},
 
-  {phase:3,scene:"life",title:"文化差异讨论",dia:[
-    {w:"友",e:"Why do Brits queue for everything?",z:"英国人为什么什么都排队？"},
-    {w:"你",e:"It's just politeness, I suppose – we value order.",z:"我想是礼貌吧，我们看重秩序。"},
-    {w:"友",e:"That's quite different from back home.",z:"和家乡很不一样。"},
-    {w:"你",e:"True, but I've grown to like it.",z:"确实，但我渐渐喜欢上了。"}],
-   voc:[{w:"queue",m:"排队"},{w:"politeness",m:"礼貌"},{w:"suppose",m:"想来"},{w:"order",m:"秩序"},{w:"grown to",m:"渐渐"}],
-   tip:"文化差异：'I suppose…' / 'I've grown to like it.' 表达 nuanced 态度。",task:"用 'It's different from back home, but…' 聊一个文化习惯。",visa:{w:"culture",m:"文化"}},
+ {phase:2,scene:"life",title:"租房与合同",dia:[
+   {w:"你",e:"Is the deposit one month's rent?",z:"押金是一个月房租吗？"},
+   {w:"东",e:"Yes, and six months minimum.",z:"对，最少六个月。"},
+   {w:"你",e:"Can I read the contract first?",z:"我能先看合同吗？"},
+   {w:"东",e:"Of course, take your time.",z:"当然，慢慢看。"}],
+   voc:[{w:"deposit",m:"押金"},{w:"rent",m:"房租"},{w:"minimum",m:"最少"},{w:"contract",m:"合同"},{w:"read",m:"读/看"}],
+   tip:"租房：问 'deposit' 'minimum term'；'Can I read the contract?'",
+   task:"用英语问一次租房的押金和条款。",
+   visa:{w:"rent",m:"租房"},q:"你看房问押金和最短租期，怎么问？",a:"Is the deposit one month's rent, and what's the minimum term?"},
 
-  {phase:3,scene:"life",title:"习语与地道表达",dia:[
-    {w:"友",e:"Business is booming!",z:"生意火爆！"},
-    {w:"你",e:"Yeah, it's been non-stop since we opened.",z:"对，开业以来就没停过。"},
-    {w:"友",e:"You must be knackered by closing time!",z:"你打烊时肯定累瘫了！"},
-    {w:"你",e:"Totally – but it's a good kind of tired.",z:"完全，但这是好的累。"}],
-   voc:[{w:"booming",m:"火爆"},{w:"non-stop",m:"不停"},{w:"knackered",m:"累瘫（地道）"},{w:"closing time",m:"打烊"},{w:"tired",m:"累"}],
-   tip:"习语让口语地道：knackered（累瘫）/ booming（火爆）/ a good kind of tired。",task:"记三个地道词：knackered, booming, chuffed（开心），今天用在对话里。",visa:{w:"idiom",m:"习语"}},
+ {phase:2,scene:"life",title:"旅行预订",dia:[
+   {w:"你",e:"Two nights in York, please.",z:"约克两晚。"},
+   {w:"前",e:"Twin or double room?",z:"双床还是大床？"},
+   {w:"你",e:"Double, with breakfast if possible.",z:"大床，最好含早。"},
+   {w:"前",e:"£90 a night, all set.",z:"一晚 90，订好了。"}],
+   voc:[{w:"nights",m:"晚"},{w:"twin",m:"双床房"},{w:"double",m:"大床房"},{w:"breakfast",m:"早餐"},{w:"booking",m:"预订"}],
+   tip:"订房：'Two nights…' 说时长；'twin or double' 选房型。",
+   task:"用英语订一次酒店房间。",
+   visa:{w:"travel",m:"旅行"},q:"你订约克两晚酒店，怎么讲需求？",a:"Two nights in York, please – a double room with breakfast if possible."},
 
-  {phase:3,scene:"life",title:"辩论与委婉反驳",dia:[
-    {w:"友",e:"I think delivery apps hurt small shops.",z:"我觉得外卖平台伤害小店。"},
-    {w:"你",e:"I see your point, though they also bring new customers.",z:"我懂你，不过它们也带来新客。"},
-    {w:"友",e:"Fair enough, I hadn't thought of that.",z:"有道理，我没这么想。"},
-    {w:"你",e:"It's a trade-off, really.",z:"说到底是个权衡。"}],
-   voc:[{w:"delivery",m:"外卖/配送"},{w:"hurt",m:"伤害"},{w:"though",m:"不过"},{w:"fair enough",m:"有道理"},{w:"trade-off",m:"权衡"}],
-   tip:"反驳不伤和气：'I see your point, though…' / 'It's a trade-off.'",task:"用 'I see your point, though…' 委婉表达不同看法。",visa:{w:"debate",m:"辩论"}},
+ {phase:2,scene:"life",title:"描述人物性格",dia:[
+   {w:"友",e:"What's your wife like?",z:"你太太什么性格？"},
+   {w:"你",e:"She's cheerful and very patient.",z:"她开朗也很有耐心。"},
+   {w:"友",e:"Sounds lovely.",z:"听着真好。"},
+   {w:"你",e:"She keeps the whole shop calm.",z:"她让全店都安稳。"}],
+   voc:[{w:"cheerful",m:"开朗"},{w:"patient",m:"耐心"},{w:"character",m:"性格"},{w:"calm",m:"冷静"},{w:"lovely",m:"美好"}],
+   tip:"性格：'She's + 形容词'；cheerful / patient / calm。",
+   task:"用英语描述两个你熟悉的人。",
+   visa:{w:"personality",m:"性格"},q:"朋友问你太太性格，你怎么描述？",a:"She's cheerful and very patient – she keeps the whole shop calm."},
 
-  {phase:3,scene:"life",title:"对英国生活的感受",dia:[
-    {w:"友",e:"Do you feel at home in the UK now?",z:"你现在在英国有归属感了吗？"},
-    {w:"你",e:"Mostly, yes – York feels like home now.",z:"大体是，约克现在像家了。"},
-    {w:"友",e:"That's lovely to hear.",z:"听了真暖心。"},
-    {w:"你",e:"The people are what made the difference.",z:"是这里的人让我有了这种感觉。"}],
+ {phase:2,scene:"visa",title:"面试官问生意与收入",dia:[
+   {w:"官",e:"How many people work for you?",z:"你雇了几个人？"},
+   {w:"你",e:"Two part-time staff I train myself.",z:"两个兼职，我自己培训。"},
+   {w:"官",e:"And the shop's income?",z:"店的营收呢？"},
+   {w:"你",e:"Steady, around £2,000 a week.",z:"稳定，约每周 2000 镑。"}],
+   voc:[{w:"part-time",m:"兼职"},{w:"train",m:"培训"},{w:"income",m:"收入"},{w:"steady",m:"稳定"},{w:"week",m:"周"}],
+   tip:"签证谈生意：说清人数与收入规模，用数字。",
+   task:"用英语准备'我的生意'一段介绍。",
+   visa:{w:"income",m:"收入"},q:"官员问你雇了几个人、营收多少，你怎么答？",a:"I have two part-time staff that I train myself, and the shop makes around £2,000 a week."},
+
+ {phase:2,scene:"visa",title:"续签路径说明",dia:[
+   {w:"官",e:"What's your next step after this visa?",z:"这签证之后你下一步？"},
+   {w:"你",e:"I'll apply for FLR(M) renewal, then ILR at five years.",z:"我先续签 FLR(M)，满五年申 ILR。"},
+   {w:"官",e:"And the English requirement?",z:"英语要求呢？"},
+   {w:"你",e:"I'm studying toward B1 now.",z:"我现在在冲 B1。"}],
+   voc:[{w:"renewal",m:"续签"},{w:"FLR(M)",m:"续签类别"},{w:"ILR",m:"永居"},{w:"requirement",m:"要求"},{w:"toward",m:"朝…"}],
+   tip:"路径：A1→A2(FLR(M))→B1(ILR)。说清 'renewal then ILR'。",
+   task:"用英语讲一遍你的签证路径。",
+   visa:{w:"path",m:"路径"},q:"面试官问你下一步签证计划，你怎么答？",a:"I'll apply for FLR(M) renewal, then ILR after five years – I'm studying toward B1 now."},
+
+ {phase:3,scene:"life",title:"聊时事新闻",dia:[
+   {w:"友",e:"Did you see the news about the budget?",z:"你看预算的新闻了吗？"},
+   {w:"你",e:"Yes, it'll affect small shops like mine.",z:"看了，会影响我这种小店。"},
+   {w:"友",e:"Tell me more.",z:"细说。"},
+   {w:"你",e:"Higher costs, but they cut business rates.",z:"成本涨，但减了商业税。"}],
+   voc:[{w:"budget",m:"预算"},{w:"affect",m:"影响"},{w:"small shops",m:"小店"},{w:"cut",m:"削减"},{w:"rates",m:"税率"}],
+   tip:"时事：'it'll affect…' 说影响；'cut business rates' 是政策词。",
+   task:"用英语聊一条你关心的新闻。",
+   visa:{w:"news",m:"新闻"},q:"朋友问预算新闻，你小店老板怎么看？",a:"Yes, it'll affect small shops like mine – higher costs, but they cut business rates."},
+
+ {phase:3,scene:"life",title:"文化差异闲聊",dia:[
+   {w:"友",e:"Brits queue for everything!",z:"英国人啥都排队！"},
+   {w:"你",e:"It's just politeness, I suppose.",z:"我想就是礼貌吧。"},
+   {w:"友",e:"You've adapted well.",z:"你适应得挺好。"},
+   {w:"你",e:"I've grown to like the order of it.",z:"我渐渐喜欢这种秩序了。"}],
+   voc:[{w:"queue",m:"排队"},{w:"politeness",m:"礼貌"},{w:"adapt",m:"适应"},{w:"order",m:"秩序"},{w:"culture",m:"文化"}],
+   tip:"文化：'I suppose…' 委婉表达；'grown to like…' 说转变。",
+   task:"用英语聊一次中英文化差异。",
+   visa:{w:"culture",m:"文化"},q:"有人说英国人爱排队，你怎么接这个话题？",a:"It's just politeness, I suppose – though I've grown to like the order of it."},
+
+ {phase:3,scene:"life",title:"地道习语",dia:[
+   {w:"友",e:"The new app is a game changer.",z:"新平台真是改变局面。"},
+   {w:"你",e:"Totally! It's saved us loads of time.",z:"完全！省了我们大量时间。"},
+   {w:"友",e:"Every cloud has a silver lining.",z:"坏事也有好的一面。"},
+   {w:"你",e:"Ha, love that saying.",z:"哈，喜欢这话。"}],
+   voc:[{w:"game changer",m:"改变局面的事"},{w:"loads of",m:"大量"},{w:"silver lining",m:"一线希望"},{w:"saying",m:"谚语"},{w:"totally",m:"完全"}],
+   tip:"习语：'game changer' 'silver lining' 让口语地道。",
+   task:"用英语学两个地道习语并用一次。",
+   visa:{w:"idiom",m:"习语"},q:"朋友说新外卖平台是game changer，你怎么接？",a:"Totally! It's been a game changer and saved us loads of time."},
+
+ {phase:3,scene:"life",title:"委婉拒绝",dia:[
+   {w:"友",e:"Join our MLM scheme?",z:"来我们这种直销？"},
+   {w:"你",e:"I appreciate the offer, but I'll pass.",z:"谢你邀，但我就不参与了。"},
+   {w:"友",e:"No worries at all.",z:"完全没事。"},
+   {w:"你",e:"Thanks for thinking of me, though.",z:"不过谢你想到我。"}],
+   voc:[{w:"appreciate",m:"感激"},{w:"offer",m:"提议"},{w:"pass",m:"婉拒"},{w:"no worries",m:"没事"},{w:"thinking of",m:"想到"}],
+   tip:"拒绝：'I appreciate… but I'll pass.' 礼貌坚定。",
+   task:"用英语委婉拒绝一次请求。",
+   visa:{w:"decline",m:"拒绝"},q:"朋友拉你做不靠谱的直销，你怎么婉拒？",a:"I appreciate the offer, but I'll have to pass – thanks for thinking of me, though."},
+
+ {phase:3,scene:"life",title:"辩论·表达立场",dia:[
+   {w:"友",e:"Delivery apps hurt small shops.",z:"外卖平台伤害小店。"},
+   {w:"你",e:"I see your point, though they bring new customers.",z:"我懂，不过它们也带来新客。"},
+   {w:"友",e:"Fair. It's complicated.",z:"有道理，挺复杂。"},
+   {w:"你",e:"Exactly – both sides have a case.",z:"对，两边都有理。"}],
+   voc:[{w:"hurt",m:"伤害"},{w:"point",m:"观点"},{w:"customers",m:"顾客"},{w:"complicated",m:"复杂"},{w:"both sides",m:"双方"}],
+   tip:"辩论：'I see your point, though…' 承认再转折；'both sides have a case.'",
+   task:"用英语就一个话题表达立场并承认对方有理。",
+   visa:{w:"debate",m:"辩论"},q:"有人反驳你'外卖平台伤害小店'，你怎么委婉回应？",a:"I see your point, though they also bring us new customers we'd never reach."},
+
+ {phase:3,scene:"life",title:"讲笑话与幽默",dia:[
+   {w:"你",e:"Why did the tea go to school? To be steeped in knowledge!",z:"茶为啥上学？为了泡在知识里！"},
+   {w:"友",e:"Ha! That's terrible.",z:"哈！太冷了。"},
+   {w:"你",e:"My jokes are as flat as my flat white.",z:"我的笑话和我馥芮白一样平淡。"},
+   {w:"友",e:"Stop it!",z:"别说了！"}],
+   voc:[{w:"joke",m:"笑话"},{w:"terrible",m:"糟糕（冷）"},{w:"flat",m:"平淡/扁平"},{w:"punchline",m:"梗"},{w:"humour",m:"幽默"}],
+   tip:"幽默：双关 'steeped'（泡/沉浸）；自嘲 'as flat as my flat white'。",
+   task:"用英语讲一个冷笑话并自嘲。",
+   visa:{w:"humour",m:"幽默"},q:"你想讲个茶的双关笑话，怎么讲？",a:"Why did the tea go to school? To be steeped in knowledge – my jokes are as flat as my flat white!"},
+
+ {phase:3,scene:"life",title:"深度聊工作",dia:[
+   {w:"友",e:"Owning a shop must be stressful.",z:"开店肯定压力大。"},
+   {w:"你",e:"It is, but it gives me freedom I love.",z:"是，但给我爱的自由。"},
+   {w:"友",e:"That trade-off makes sense.",z:"这取舍合理。"},
+   {w:"你",e:"Exactly – I'd never go back to a nine-to-five.",z:"对，我再不想回朝九晚五。"}],
+   voc:[{w:"stressful",m:"有压力"},{w:"freedom",m:"自由"},{w:"trade-off",m:"取舍"},{w:"never",m:"绝不"},{w:"nine-to-five",m:"朝九晚五"}],
+   tip:"深度：'trade-off' 说取舍；'I'd never go back to…' 表决心。",
+   task:"用英语聊一次工作的得失。",
+   visa:{w:"career",m:"职业"},q:"朋友说开店压力大，你怎么谈取舍？",a:"It is, but it gives me a freedom I love – I'd never go back to a nine-to-five."},
+
+ {phase:3,scene:"life",title:"聊金钱与生意经",dia:[
+   {w:"友",e:"How's the margin on bubble tea?",z:"奶茶利润空间怎样？"},
+   {w:"你",e:"Decent, but rent eats into it.",z:"不错，但房租吃掉了。"},
+   {w:"友",e:"Tell me about it.",z:"太懂了。"},
+   {w:"你",e:"We cut waste to protect the margin.",z:"我们减损耗保利润。"}],
+   voc:[{w:"margin",m:"利润"},{w:"rent",m:"房租"},{w:"eat into",m:"侵蚀"},{w:"waste",m:"损耗"},{w:"protect",m:"保护"}],
+   tip:"生意：'margin' 利润；'rent eats into it' 说成本压力。",
+   task:"用英语聊一次利润和成本。",
+   visa:{w:"finance",m:"财务"},q:"同行问奶茶利润，你怎么谈房租压力？",a:"Decent, but rent eats into it – we cut waste to protect the margin."},
+
+ {phase:3,scene:"life",title:"处理团队冲突",dia:[
+   {w:"你",e:"I heard there was a mix-up between you two.",z:"听说你俩有误会。"},
+   {w:"员",e:"Yeah, we saw it differently.",z:"对，看法不同。"},
+   {w:"你",e:"Let's clear the air and move on.",z:"咱把话说开，翻篇吧。"},
+   {w:"员",e:"Fair. No hard feelings.",z:"行，不记仇。"}],
+   voc:[{w:"mix-up",m:"误会"},{w:"differently",m:"不同地"},{w:"clear the air",m:"说开"},{w:"move on",m:"翻篇"},{w:"hard feelings",m:"芥蒂"}],
+   tip:"冲突：'clear the air' 化解；'no hard feelings' 不记仇。",
+   task:"用英语化解一次团队小矛盾。",
+   visa:{w:"team",m:"团队"},q:"你调和两名员工误会，怎么收尾？",a:"Let's clear the air and move on – no hard feelings, we're a team."},
+
+ {phase:3,scene:"life",title:"安慰朋友",dia:[
+   {w:"友",e:"I failed the driving test again.",z:"我又没过驾照考试。"},
+   {w:"你",e:"I'm so sorry. That must sting.",z:"真遗憾，肯定扎心。"},
+   {w:"友",e:"I just want to give up.",z:"我想放弃。"},
+   {w:"你",e:"Don't – third time's the charm.",z:"别，事不过三。"}],
+   voc:[{w:"failed",m:"失败"},{w:"sting",m:"刺痛"},{w:"give up",m:"放弃"},{w:"third time",m:"第三次"},{w:"charm",m:"好运"}],
+   tip:"安慰：'That must sting' 共情；'third time's the charm' 鼓励。",
+   task:"用英语安慰一次受挫的朋友。",
+   visa:{w:"comfort",m:"安慰"},q:"朋友考试又没过想放弃，你怎么鼓励？",a:"I'm so sorry, that must sting – but don't give up, third time's the charm."},
+
+ {phase:3,scene:"life",title:"表达愿望与遗憾",dia:[
+   {w:"友",e:"Any regrets opening the shop?",z:"开店后悔过吗？"},
+   {w:"你",e:"I wish I'd started sooner, honestly.",z:"说实话，希望更早开始。"},
+   {w:"友",e:"Better late than never.",z:"迟做总比不做好。"},
+   {w:"你",e:"True. No real regrets, though.",z:"对，不过真不后悔。"}],
+   voc:[{w:"regret",m:"后悔"},{w:"wish",m:"希望"},{w:"sooner",m:"更早"},{w:"better late",m:"迟比不做好"},{w:"honestly",m:"说实话"}],
+   tip:"愿望：'I wish I'd + 过去分词' 表遗憾；'better late than never'。",
+   task:"用英语表达一个愿望或遗憾。",
+   visa:{w:"wish",m:"愿望"},q:"朋友问你开店后不后悔，你怎么答？",a:"I wish I'd started sooner, honestly – but better late than never, no real regrets."},
+
+ {phase:3,scene:"life",title:"简短发言/祝酒",dia:[
+   {w:"你",e:"Thanks everyone for coming today.",z:"谢谢大家今天来。"},
+   {w:"众",e:"Cheers!",z:"干杯！"},
+   {w:"你",e:"Here's to good tea and good friends.",z:"为好茶和好友干杯。"},
+   {w:"众",e:"Hear hear!",z:"说得好！"}],
+   voc:[{w:"thanks for coming",m:"谢谢光临"},{w:"cheers",m:"干杯/谢"},{w:"here's to",m:"为…干杯"},{w:"hear hear",m:"说得好"},{w:"speech",m:"发言"}],
+   tip:"祝酒：'Here's to…' 为某事举杯；'Hear hear!' 附和。",
+   task:"用英语准备一段 20 秒开业/聚会发言。",
+   visa:{w:"speech",m:"发言"},q:"你在店庆致辞，怎么开场和祝酒？",a:"Thanks everyone for coming – here's to good tea and good friends. Cheers!"},
+
+ {phase:3,scene:"life",title:"谈判与议价",dia:[
+   {w:"你",e:"Your rent is above market rate.",z:"你租金高于市场价。"},
+   {w:"东",e:"But the location is prime.",z:"但位置黄金。"},
+   {w:"你",e:"Fair. How about a two-year fixed term?",z:"有道理。两年固定租期如何？"},
+   {w:"东",e:"Let's agree on that.",z:"就这么说定。"}],
+   voc:[{w:"market rate",m:"市场价"},{w:"prime",m:"黄金/优质"},{w:"fixed term",m:"固定期"},{w:"agree",m:"同意"},{w:"rent",m:"租金"}],
+   tip:"谈判：摆事实 'above market rate' 再提方案 'How about…?'",
+   task:"用英语谈一次租金或价格。",
+   visa:{w:"negotiate",m:"谈判"},q:"你觉得房东租金偏高，怎么谈？",a:"Your rent is above market rate, but the location is prime – how about a two-year fixed term?"},
+
+ {phase:3,scene:"life",title:"聊饮食文化",dia:[
+   {w:"友",e:"British food gets a bad rap.",z:"英国菜名声不好。"},
+   {w:"你",e:"True, but a full English is comfort itself.",z:"是，但全套英早是种治愈。"},
+   {w:"友",e:"And your bubble tea is the new craze.",z:"你奶茶倒是新潮。"},
+   {w:"你",e:"East meets west, I guess!",z:"算中西合璧吧！"}],
+   voc:[{w:"bad rap",m:"坏名声"},{w:"full English",m:"全套英式早餐"},{w:"comfort",m:"慰藉"},{w:"craze",m:"热潮"},{w:"east meets west",m:"中西合璧"}],
+   tip:"饮食文化：'gets a bad rap' 名声差；'comfort food' 治愈食物。",
+   task:"用英语聊一次饮食文化。",
+   visa:{w:"food",m:"食物"},q:"朋友说英国菜名声差，你怎么接？",a:"True, but a full English is comfort itself – and my bubble tea is east meets west!"},
+
+ {phase:3,scene:"life",title:"聊环保",dia:[
+   {w:"友",e:"We should use less plastic.",z:"该少用塑料。"},
+   {w:"你",e:"Agreed. We switched to paper cups.",z:"同意，我们换纸杯了。"},
+   {w:"友",e:"Small steps add up.",z:"积少成多。"},
+   {w:"你",e:"Exactly, every bit helps.",z:"对，点滴都有用。"}],
+   voc:[{w:"plastic",m:"塑料"},{w:"agreed",m:"同意"},{w:"switched",m:"换"},{w:"add up",m:"累积"},{w:"every bit",m:"每一点"}],
+   tip:"环保：'Agreed.' 赞同；'small steps add up' 积少成多。",
+   task:"用英语聊一次环保做法。",
+   visa:{w:"environment",m:"环境"},q:"朋友说该减塑料，你店里怎么做怎么答？",a:"Agreed – we switched to paper cups, and small steps really do add up."},
+
+ {phase:3,scene:"life",title:"聊科技影响",dia:[
+   {w:"友",e:"AI is changing everything, right?",z:"AI 在改变一切，对吧？"},
+   {w:"你",e:"For shops, it helps with stock and ads.",z:"对小店，它帮管库存和广告。"},
+   {w:"友",e:"As long as it doesn't replace us.",z:"只要不取代我们就好。"},
+   {w:"你",e:"Ha, the human touch still wins.",z:"哈，人情味还是赢。"}],
+   voc:[{w:"AI",m:"人工智能"},{w:"stock",m:"库存"},{w:"ads",m:"广告"},{w:"replace",m:"取代"},{w:"human touch",m:"人情味"}],
+   tip:"科技：'helps with…' 说用途；'the human touch wins' 点人情。",
+   task:"用英语聊一次科技对你的影响。",
+   visa:{w:"tech",m:"科技"},q:"朋友说AI改变一切，你店里怎么看？",a:"For shops it helps with stock and ads – but the human touch still wins."},
+
+ {phase:3,scene:"life",title:"对英国生活的归属感",dia:[
+   {w:"友",e:"Do you feel at home in the UK now?",z:"你现在在英国有归属感了吗？"},
+   {w:"你",e:"Mostly, yes – York feels like home now.",z:"大体是，约克现在像家了。"},
+   {w:"友",e:"That's lovely to hear.",z:"听了真暖心。"},
+   {w:"你",e:"The people are what made the difference.",z:"是这里的人让我有了这种感觉。"}],
    voc:[{w:"at home",m:"有归属感"},{w:"mostly",m:"大体"},{w:"feel like",m:"感觉像"},{w:"lovely",m:"暖心"},{w:"difference",m:"不同/关键"}],
-   tip:"深层表达：'feel at home' / 'what made the difference'。B2 能聊情感与归属。",task:"用 'I feel at home here because…' 说你在约克的归属感。",visa:{w:"belong",m:"归属"}},
+   tip:"深层表达：'feel at home' / 'what made the difference'。",
+   task:"用 'I feel at home here because…' 说你在约克的归属感。",
+   visa:{w:"belong",m:"归属"},q:"朋友问'Do you feel at home in the UK?'，你怎么深层回答？",a:"Mostly, yes – the people here are what made York feel like home to me."},
 
-  {phase:3,scene:"life",title:"处理误会",dia:[
-    {w:"客",e:"Wait, I didn't order this!",z:"等等，我没点这个！"},
-    {w:"你",e:"Oh, my apologies – let me double-check the receipt.",z:"哦，抱歉，我核对一下小票。"},
-    {w:"客",e:"No worries, these things happen.",z:"没事，常有的事。"},
-    {w:"你",e:"Thanks for your understanding, I'll fix it now.",z:"谢谢理解，我马上改。"}],
-   voc:[{w:"wait",m:"等等"},{w:"apologies",m:"道歉（正式）"},{w:"double-check",m:"核对"},{w:"receipt",m:"小票"},{w:"understanding",m:"理解"}],
-   tip:"误会：先 'my apologies' 再 'let me check'。'these things happen' 化解尴尬。",task:"用 'Let me double-check…' 处理一次误会或错单。",visa:{w:"misunderstand",m:"误会"}}
+ {phase:4,scene:"life",title:"即兴发言",dia:[
+   {w:"你",e:"What I value most is consistency, not speed.",z:"我最看重的是坚持，不是速度。"},
+   {w:"众",e:"Well said.",z:"说得好。"},
+   {w:"你",e:"A shop is built one cup at a time.",z:"店是一杯一杯建起来的。"},
+   {w:"众",e:"Hear hear.",z:"说得好。"}],
+   voc:[{w:"value",m:"看重"},{w:"consistency",m:"坚持"},{w:"well said",m:"说得好"},{w:"built",m:"建立"},{w:"impromptu",m:"即兴"}],
+   tip:"即兴：用抽象名词 'consistency' 提升层次；'one … at a time' 形象。",
+   task:"用英语做一次 30 秒即兴小演讲。",
+   visa:{w:"speak",m:"演讲"},q:"被临时要求讲两句经营心得，你怎么开口？",a:"What I value most is consistency, not speed – a shop is built one cup at a time."},
+
+ {phase:4,scene:"life",title:"复杂辩论",dia:[
+   {w:"友",e:"Immigration rules should be stricter.",z:"移民规定该更严。"},
+   {w:"你",e:"I see the concern, yet they also fuel the economy.",z:"我懂这顾虑，但它们也拉动经济。"},
+   {w:"友",e:"That's a fair counterpoint.",z:"这是有力的反驳。"},
+   {w:"你",e:"The truth sits somewhere in between.",z:"真相在中间某处。"}],
+   voc:[{w:"stricter",m:"更严"},{w:"concern",m:"顾虑"},{w:"fuel",m:"推动"},{w:"counterpoint",m:"反驳"},{w:"in between",m:"在中间"}],
+   tip:"复杂辩论：'yet they also…' 平衡；'the truth sits in between.'",
+   task:"用英语就一个有争议话题做平衡论述。",
+   visa:{w:"immigration",m:"移民"},q:"朋友主张收紧移民，你怎么平衡作答？",a:"I see the concern, yet immigrants also fuel the economy – the truth sits somewhere in between."},
+
+ {phase:4,scene:"life",title:"含蓄与反讽",dia:[
+   {w:"友",e:"'Lovely' weather – again, rain?",z:"“好”天气——又下雨？"},
+   {w:"你",e:"British 'lovely' is code for dreadful, isn't it?",z:"英国人的'lovely'是'糟糕'的代称吧？"},
+   {w:"友",e:"Ha, you've gone native!",z:"哈，你入乡随俗了！"},
+   {w:"你",e:"Guilty as charged.",z:"认了。"}],
+   voc:[{w:"code",m:"代称"},{w:"dreadful",m:"糟糕"},{w:"gone native",m:"入乡随俗"},{w:"guilty",m:"认了"},{w:"irony",m:"反讽"}],
+   tip:"反讽：'lovely' 常反义；'gone native' 'guilty as charged' 幽默自嘲。",
+   task:"用英语理解并玩一次英式反讽。",
+   visa:{w:"nuance",m:"微妙"},q:"英国人用'lovely'说下雨，你怎么接这个反讽？",a:"British 'lovely' is code for dreadful, isn't it? Guilty as charged – I've gone native!"},
+
+ {phase:4,scene:"life",title:"讲英国文化细节",dia:[
+   {w:"你",e:"The pub is the real heart of a village.",z:"酒吧才是村庄真正的心脏。"},
+   {w:"友",e:"True, it's where everyone meets.",z:"对，大家都在那碰头。"},
+   {w:"你",e:"Not just drinking – it's community.",z:"不只是喝酒，是社区。"},
+   {w:"友",e:"Nicely put.",z:"说得好。"}],
+   voc:[{w:"pub",m:"酒吧"},{w:"heart",m:"心脏/核心"},{w:"village",m:"村庄"},{w:"community",m:"社区"},{w:"nicely put",m:"说得好"}],
+   tip:"文化深度：'the heart of…' 'it's community' 抽象升华。",
+   task:"用英语讲一个你对英国文化的观察。",
+   visa:{w:"culture",m:"文化"},q:"你想讲英国酒吧文化，怎么升华讲？",a:"The pub is the real heart of a village – not just drinking, it's community."},
+
+ {phase:4,scene:"shop",title:"正式投诉升级",dia:[
+   {w:"你",e:"I must escalate this to a manager.",z:"我必须把这事升级给经理。"},
+   {w:"客",e:"Finally, someone takes it seriously.",z:"终于有人当回事了。"},
+   {w:"你",e:"I'll log the complaint and follow up.",z:"我会登记投诉并跟进。"},
+   {w:"客",e:"Thank you for the professionalism.",z:"谢你的专业。"}],
+   voc:[{w:"escalate",m:"升级"},{w:"manager",m:"经理"},{w:"log",m:"登记"},{w:"follow up",m:"跟进"},{w:"professionalism",m:"专业"}],
+   tip:"正式：'escalate' 'log the complaint' 'follow up' 显专业。",
+   task:"用英语处理一次需升级的正式投诉。",
+   visa:{w:"escalate",m:"升级"},q:"顾客坚持要找经理，你专业怎么处理？",a:"I'll escalate this to a manager and log the complaint – we'll follow up with you."},
+
+ {phase:4,scene:"life",title:"商务社交",dia:[
+   {w:"你",e:"Let me introduce you to my supplier.",z:"让我把你介绍给我供应商。"},
+   {w:"客",e:"Pleased to meet you.",z:"幸会。"},
+   {w:"你",e:"Always good to widen the network.",z:"拓展人脉总是好的。"},
+   {w:"客",e:"Indeed, connections are everything.",z:"的确，人脉就是一切。"}],
+   voc:[{w:"introduce",m:"介绍"},{w:"supplier",m:"供应商"},{w:"network",m:"人脉网"},{w:"widen",m:"拓展"},{w:"connections",m:"关系/人脉"}],
+   tip:"商务：'widen the network' 'connections are everything' 地道。",
+   task:"用英语在商务场合介绍两人并聊人脉。",
+   visa:{w:"networking",m:"社交"},q:"商务场合你想介绍朋友给供应商，怎么讲？",a:"Let me introduce you to my supplier – always good to widen the network."},
+
+ {phase:4,scene:"life",title:"描述抽象概念",dia:[
+   {w:"友",e:"What does 'home' mean to you now?",z:"现在'家'对你意味着什么？"},
+   {w:"你",e:"Not a place, but a sense of belonging.",z:"不是地方，而是归属感。"},
+   {w:"友",e:"That's profound.",z:"挺深。"},
+   {w:"你",e:"Two cultures, one roof, honestly.",z:"两种文化，一个屋檐，实话。"}],
+   voc:[{w:"home",m:"家"},{w:"sense",m:"感觉"},{w:"belonging",m:"归属"},{w:"profound",m:"深刻"},{w:"roof",m:"屋顶/家"}],
+   tip:"抽象：'a sense of…' 'not A but B' 结构提升。",
+   task:"用英语描述一个抽象概念（家/信任/自由）。",
+   visa:{w:"abstract",m:"抽象"},q:"朋友问'家'对你现在意味什么，你怎么答？",a:"Not a place, but a sense of belonging – two cultures under one roof, honestly."},
+
+ {phase:4,scene:"life",title:"生动讲故事",dia:[
+   {w:"你",e:"Picture this: a queue out the door on day one.",z:"想象一下：开业第一天门口排长队。"},
+   {w:"友",e:"No way!",z:"不会吧！"},
+   {w:"你",e:"We ran out of pearls by noon, total chaos!",z:"中午珍珠就卖光，一片混乱！"},
+   {w:"友",e:"Best kind of problem.",z:"这是幸福烦恼。"}],
+   voc:[{w:"picture this",m:"想象一下"},{w:"queue",m:"排队"},{w:"ran out",m:"卖光"},{w:"chaos",m:"混乱"},{w:"storytelling",m:"讲故事"}],
+   tip:"讲故事：'Picture this…' 开场；'ran out by noon' 制造画面。",
+   task:"用英语生动讲一件店里的真事。",
+   visa:{w:"story",m:"故事"},q:"你想生动讲开业第一天，怎么开场？",a:"Picture this: a queue out the door on day one – we ran out of pearls by noon, total chaos!"},
+
+ {phase:4,scene:"life",title:"表达细腻情感",dia:[
+   {w:"友",e:"You seem torn lately.",z:"你最近好像纠结。"},
+   {w:"你",e:"I am – proud of the shop, yet miss home.",z:"是，为店骄傲，又想家。"},
+   {w:"友",e:"That's a lot to hold.",z:"这挺沉重。"},
+   {w:"你",e:"It is. But I wouldn't trade it.",z:"是，但我不愿换。"}],
+   voc:[{w:"torn",m:"纠结"},{w:"proud",m:"骄傲"},{w:"miss home",m:"想家"},{w:"hold",m:"承受"},{w:"trade",m:"交换"}],
+   tip:"细腻：'torn' 纠结；'wouldn't trade it' 不舍得换。",
+   task:"用英语表达一种矛盾的心情。",
+   visa:{w:"emotion",m:"情感"},q:"朋友说你最近纠结，你怎么细腻表达？",a:"I am – proud of the shop, yet I miss home. It's a lot, but I wouldn't trade it."},
+
+ {phase:4,scene:"life",title:"学术/正式场合",dia:[
+   {w:"你",e:"In my view, small firms drive local growth.",z:"我认为小店驱动本地增长。"},
+   {w:"官",e:"Could you elaborate?",z:"能展开说说吗？"},
+   {w:"你",e:"Certainly – they retain wealth in the area.",z:"当然，它们让财富留在本地。"},
+   {w:"官",e:"A fair point.",z:"说得在理。"}],
+   voc:[{w:"in my view",m:"我认为"},{w:"drive",m:"驱动"},{w:"elaborate",m:"展开"},{w:"retain",m:"保留"},{w:"certainly",m:"当然"}],
+   tip:"正式：'In my view' 'Could you elaborate?' 'retain wealth' 正式词。",
+   task:"用英语在正式场合做一个观点陈述。",
+   visa:{w:"formal",m:"正式"},q:"官员要你展开'小店带动本地'，你怎么答？",a:"Certainly – small firms retain wealth in the area and drive local growth."},
+
+ {phase:4,scene:"life",title:"媒体观点分析",dia:[
+   {w:"友",e:"The paper says shops are dying.",z:"报纸说店都在死。"},
+   {w:"你",e:"That headline sells fear, not facts.",z:"那标题卖的是恐惧不是事实。"},
+   {w:"友",e:"Fair. The data tells another story.",z:"有道理，数据是另一回事。"},
+   {w:"你",e:"We must read past the spin.",z:"得看穿包装。"}],
+   voc:[{w:"paper",m:"报纸"},{w:"headline",m:"标题"},{w:"fear",m:"恐惧"},{w:"data",m:"数据"},{w:"spin",m:"包装/偏向"}],
+   tip:"媒体：'sells fear, not facts' 'read past the spin' 批判性表达。",
+   task:"用英语批判性分析一则新闻标题。",
+   visa:{w:"media",m:"媒体"},q:"朋友说报纸讲店在消亡，你怎么批判回应？",a:"That headline sells fear, not facts – the data tells another story; we must read past the spin."},
+
+ {phase:4,scene:"life",title:"领导力沟通",dia:[
+   {w:"你",e:"I set the tone, then trust the team.",z:"我定基调，然后信任团队。"},
+   {w:"员",e:"That's why we stay.",z:"所以我们留下来。"},
+   {w:"你",e:"Lead by example, not by fear.",z:"以身作则，不以威压。"},
+   {w:"员",e:"Words to live by.",z:"受用。"}],
+   voc:[{w:"tone",m:"基调"},{w:"trust",m:"信任"},{w:"lead by example",m:"以身作则"},{w:"fear",m:"恐惧/威压"},{w:"leadership",m:"领导力"}],
+   tip:"领导：'set the tone' 'lead by example, not by fear' 金句。",
+   task:"用英语讲一次你的带团队理念。",
+   visa:{w:"lead",m:"领导"},q:"员工问你怎样带团队，你怎么答？",a:"I set the tone, then trust the team – lead by example, not by fear."},
+
+ {phase:4,scene:"life",title:"跨文化误会化解",dia:[
+   {w:"客",e:"You Chinese are so loud in shops!",z:"你们中国人店里好吵！"},
+   {w:"你",e:"I hear you – yet it's warmth, not rudeness.",z:"我懂，但那是热情不是无礼。"},
+   {w:"客",e:"Hmm, I never saw it that way.",z:"嗯，我从未这样看。"},
+   {w:"你",e:"Difference is a chance to learn, isn't it?",z:"差异是学习的机会，不是吗？"}],
+   voc:[{w:"loud",m:"吵"},{w:"warmth",m:"热情"},{w:"rudeness",m:"无礼"},{w:"never saw",m:"从未这样看"},{w:"chance",m:"机会"}],
+   tip:"化解：'I hear you' 先接；'warmth not rudeness' 重构；'chance to learn'。",
+   task:"用英语化解一次跨文化误会。",
+   visa:{w:"bridge",m:"桥梁"},q:"顾客说中国人店里吵，你怎么化解？",a:"I hear you – yet it's warmth, not rudeness. Difference is a chance to learn, isn't it?"},
 ];
 
 /* ============ 实战对话题库（独立，随机抽题） ============ */
 const PRACTICE = [
-  {phase:1,scene:"shop",q:"一位顾客进门，你作为店员第一句该说什么？",a:"Hi there! Welcome to ALS Bubble Tea. What can I get for you?"},
-  {phase:1,scene:"shop",q:"顾客说要奶茶但没说杯型和糖度，你怎么问？",a:"What size would you like? Medium or large? And how sweet?"},
-  {phase:1,scene:"shop",q:"顾客点完说'Actually, make it to go.'，你怎么回？",a:"Sure, no problem – to go it is. It'll be ready in five minutes."},
-  {phase:1,scene:"shop",q:"你做错了一杯，顾客有点不高兴，你第一句说什么？",a:"I'm so sorry about that – let me remake it for you right away."},
-  {phase:1,scene:"life",q:"邻居问'How's it going?'，你最自然的回答是？",a:"Pretty good, thanks! Just busy with the shop as usual."},
-  {phase:1,scene:"life",q:"你迷路了，怎么礼貌地向路人问火车站？",a:"Excuse me, could you tell me how to get to the train station?"},
-  {phase:1,scene:"life",q:"你在超市找不到想要的东西，怎么问店员？",a:"Excuse me, where can I find the brown sugar, please?"},
-  {phase:1,scene:"life",q:"护士问'What's the problem?'，你喉咙痛加咳嗽怎么答？",a:"I've got a sore throat and a bit of a cough."},
-  {phase:1,scene:"visa",q:"面试官问'Tell me about your family.'，你怎么开头？",a:"I'm married to a British citizen. We live together in York and run a bubble tea shop."},
-  {phase:1,scene:"visa",q:"面试官问'How do you keep your relationship strong?'，你怎么答？",a:"We video call every day and visit each other as often as we can."},
-  {phase:2,scene:"shop",q:"顾客发脾气说等太久，你第一句怎么稳住他？",a:"You're absolutely right to be upset – I'm so sorry, let me fix this now."},
-  {phase:2,scene:"shop",q:"你想谈批发价，怎么开口要折扣？",a:"If I order 200 units, is there any discount you can offer?"},
-  {phase:2,scene:"life",q:"朋友问'What do you think of running a shop?'，你怎么表达看法？",a:"Personally, I think it's hard work but very rewarding."},
-  {phase:2,scene:"life",q:"别人说'Tea is better than coffee.'，你不同意怎么委婉回？",a:"I see what you mean, but I actually prefer coffee in the morning."},
-  {phase:2,scene:"life",q:"朋友说生意累，你建议他雇人，怎么说？",a:"Why don't you hire a part-timer? It would take a lot of pressure off you."},
-  {phase:2,scene:"visa",q:"官员问'How many people work for you?'，你怎么答？",a:"I have two part-time staff that I train myself – it's a small but happy team."},
-  {phase:3,scene:"life",q:"朋友说'Brits queue for everything.'，你怎么接这个文化话题？",a:"It's just politeness, I suppose – though I've grown to like the order of it."},
-  {phase:3,scene:"life",q:"有人反驳你'外卖平台伤害小店'，你怎么委婉回应？",a:"I see your point, though they also bring us new customers we'd never reach."},
-  {phase:3,scene:"life",q:"朋友问'Do you feel at home in the UK?'，你怎么深层回答？",a:"Mostly, yes – the people here are what made York feel like home to me."},
-  {phase:3,scene:"life",q:"顾客说'Wait, I didn't order this!'，你怎么化解误会？",a:"My apologies – let me double-check the receipt. Thanks for your understanding."}
+ {phase:1,scene:"shop",q:"一位顾客进门，你作为店员第一句该说什么？",a:"Hi there! Welcome to ALS Bubble Tea. What can I get for you?"},
+ {phase:1,scene:"shop",q:"顾客说要奶茶但没说杯型和糖度，你怎么问？",a:"What size would you like? Medium or large? And how sweet?"},
+ {phase:1,scene:"shop",q:"顾客点完说'Actually, make it to go.'，你怎么回？",a:"Sure, no problem – to go it is. It'll be ready in five minutes."},
+ {phase:1,scene:"shop",q:"你做错了一杯，顾客有点不高兴，你第一句说什么？",a:"I'm so sorry about that – let me remake it for you right away."},
+ {phase:1,scene:"life",q:"邻居问'How's it going?'，你最自然的回答是？",a:"Pretty good, thanks! Just busy with the shop as usual."},
+ {phase:1,scene:"life",q:"你迷路了，怎么礼貌地向路人问火车站？",a:"Excuse me, could you tell me how to get to the train station?"},
+ {phase:1,scene:"life",q:"你在超市找不到想要的东西，怎么问店员？",a:"Excuse me, where can I find the brown sugar, please?"},
+ {phase:1,scene:"life",q:"护士问'What's the problem?'，你喉咙痛加咳嗽怎么答？",a:"I've got a sore throat and a bit of a cough."},
+ {phase:1,scene:"visa",q:"面试官问'Tell me about your family.'，你怎么开头？",a:"I'm married to a British citizen. We live together in York and run a bubble tea shop."},
+ {phase:1,scene:"visa",q:"面试官问'How do you keep your relationship strong?'，你怎么答？",a:"We video call every day and visit each other as often as we can."},
+ {phase:2,scene:"shop",q:"顾客发脾气说等太久，你第一句怎么稳住他？",a:"You're absolutely right to be upset – I'm so sorry, let me fix this now."},
+ {phase:2,scene:"shop",q:"你想谈批发价，怎么开口要折扣？",a:"If I order 200 units, is there any discount you can offer?"},
+ {phase:2,scene:"life",q:"朋友问'What do you think of running a shop?'，你怎么表达看法？",a:"Personally, I think it's hard work but very rewarding."},
+ {phase:2,scene:"life",q:"别人说'Tea is better than coffee.'，你不同意怎么委婉回？",a:"I see what you mean, but I actually prefer coffee in the morning."},
+ {phase:2,scene:"life",q:"朋友说生意累，你建议他雇人，怎么说？",a:"Why don't you hire a part-timer? It would take a lot of pressure off you."},
+ {phase:2,scene:"visa",q:"官员问'How many people work for you?'，你怎么答？",a:"I have two part-time staff that I train myself – it's a small but happy team."},
+ {phase:3,scene:"life",q:"朋友说'Brits queue for everything.'，你怎么接这个文化话题？",a:"It's just politeness, I suppose – though I've grown to like the order of it."},
+ {phase:3,scene:"life",q:"有人反驳你'外卖平台伤害小店'，你怎么委婉回应？",a:"I see your point, though they also bring us new customers we'd never reach."},
+ {phase:3,scene:"life",q:"朋友说'Do you feel at home in the UK?'，你怎么深层回答？",a:"Mostly, yes – the people here are what made York feel like home to me."},
+ {phase:3,scene:"life",q:"顾客说'Wait, I didn't order this!'，你怎么化解误会？",a:"My apologies – let me double-check the receipt. Thanks for your understanding."},
+ {phase:4,scene:"life",q:"被临时要求讲两句经营心得，你怎么即兴开口？",a:"What I value most is consistency, not speed – a shop is built one cup at a time."},
+ {phase:4,scene:"life",q:"朋友主张收紧移民，你怎么平衡作答？",a:"I see the concern, yet immigrants also fuel the economy – the truth sits in between."},
+ {phase:4,scene:"shop",q:"顾客坚持要找经理，你专业怎么处理？",a:"I'll escalate this to a manager and log the complaint – we'll follow up with you."},
+ {phase:4,scene:"life",q:"朋友说报纸讲店在消亡，你怎么批判性回应？",a:"That headline sells fear, not facts – the data tells another story; we must read past the spin."},
 ];
 
 /* ============ 听力浸泡资源（按阶段分级，免费） ============ */
 const LISTEN = [
-  {phase:1,title:"Easy English 日常慢速（YouTube）",desc:"专为非母语者，慢速清晰，最适合 A2 起步泡耳朵。",url:"https://www.youtube.com/results?search_query=easy+english+conversation"},
-  {phase:1,title:"BBC 6 Minute English",desc:"每集 6 分钟一个生活话题，英式发音标准，可下音频。",url:"https://www.youtube.com/results?search_query=bbc+6+minute+english"},
-  {phase:1,title:"店员英语实景（搜索）",desc:"搜 'bubble tea shop English' 看真实点单对话，直接套用。",url:"https://www.youtube.com/results?search_query=bubble+tea+shop+english"},
-  {phase:2,title:"English with Lucy（英式）",desc:"英式发音+实用口语，B1 练地道表达和听力。",url:"https://www.youtube.com/results?search_query=english+with+lucy"},
-  {phase:2,title:"The English We Speak（BBC）",desc:"每集讲一个习语/地道短语，短小精悍。",url:"https://www.youtube.com/results?search_query=the+english+we+speak+bbc"},
-  {phase:2,title:"真实英国人闲聊（搜索）",desc:"搜 'British people everyday conversation' 听真实语速。",url:"https://www.youtube.com/results?search_query=british+everyday+conversation"},
-  {phase:3,title:"BBC News（慢速/正常）",desc:"听新闻练抓大意，B2 突破理解速度。",url:"https://www.youtube.com/results?search_query=bbc+news+uk"},
-  {phase:3,title:"The Diary of a CEO（访谈）",desc:"深度访谈，练长难句与观点表达。",url:"https://www.youtube.com/results?search_query=the+diary+of+a+ceo"}
+ {phase:1,title:"Easy English 日常慢速（YouTube）",desc:"专为非母语者，慢速清晰，最适合 A2 起步泡耳朵。",url:"https://www.youtube.com/results?search_query=easy+english+conversation"},
+ {phase:1,title:"BBC 6 Minute English",desc:"每集 6 分钟一个生活话题，英式发音标准，可下音频。",url:"https://www.youtube.com/results?search_query=bbc+6+minute+english"},
+ {phase:1,title:"店员英语实景（搜索）",desc:"搜 'bubble tea shop English' 看真实点单对话，直接套用。",url:"https://www.youtube.com/results?search_query=bubble+tea+shop+english"},
+ {phase:2,title:"English with Lucy（英式）",desc:"英式发音+实用口语，B1 练地道表达和听力。",url:"https://www.youtube.com/results?search_query=english+with+lucy"},
+ {phase:2,title:"The English We Speak（BBC）",desc:"每集讲一个习语/地道短语，短小精悍。",url:"https://www.youtube.com/results?search_query=the+english+we+speak+bbc"},
+ {phase:2,title:"真实英国人闲聊（搜索）",desc:"搜 'British people everyday conversation' 听真实语速。",url:"https://www.youtube.com/results?search_query=british+everyday+conversation"},
+ {phase:3,title:"BBC News（慢速/正常）",desc:"听新闻练抓大意，B2 突破理解速度。",url:"https://www.youtube.com/results?search_query=bbc+news+uk"},
+ {phase:3,title:"The Diary of a CEO（访谈）",desc:"深度访谈，练长难句与观点表达。",url:"https://www.youtube.com/results?search_query=the+diary+of+a+ceo"},
+ {phase:4,title:"BBC Radio 4（谈话节目）",desc:"纯英式思辨与辩论，C1 练抽象与正式表达。",url:"https://www.youtube.com/results?search_query=bbc+radio+4"},
+ {phase:4,title:"TED Talks（英式讲者）",desc:"结构清晰的观点演讲，练逻辑与即兴。",url:"https://www.youtube.com/results?search_query=ted+talks+british+accent"},
 ];
 
 /* ============ 状态 ============ */
@@ -720,8 +1156,8 @@ function spk(text){return `<span class="spk" data-t="${encodeURIComponent(text)}
 /* ============ 工具 ============ */
 function sceneText(s){return s==="shop"?"🧋 奶茶店":s==="life"?"💬 日常":"🛂 签证";}
 function sceneClass(s){return s==="shop"?"shop":s==="life"?"life":"visa";}
-function phaseText(p){return p===1?"A2 生存":p===2?"B1 流畅":"B2 自如";}
-function phaseClass(p){return p===1?"p1":p===2?"p2":"p3";}
+function phaseText(p){return p===1?"A2 生存":p===2?"B1 流畅":p===3?"B2 自在":p===4?"C1 自如":"A2";}
+function phaseClass(p){return p===1?"p1":p===2?"p2":p===3?"p3":"p4";}
 function todayStr(){return new Date().toLocaleDateString('en-CA');}
 function completedCount(){return Object.keys(data.completed).filter(k=>data.completed[k]).length;}
 function nextLessonIdx(){
@@ -730,18 +1166,28 @@ function nextLessonIdx(){
 }
 
 /* ============ 渲染：学习 ============ */
-function renderStudy(){
-  const idx=nextLessonIdx();
+let currentIdx=-1; // 当前正在查看的课；-1 表示初始/全部完成
+function renderStudy(forceIdx){
   const card=document.getElementById('lessonCard');
+  let idx;
+  if(forceIdx!==undefined && forceIdx!==null && forceIdx>=0 && forceIdx<LESSONS.length){ idx=forceIdx; }
+  else if(currentIdx!==-1 && currentIdx>=0 && currentIdx<LESSONS.length){ idx=currentIdx; }
+  else { idx=nextLessonIdx(); }
+
   if(idx===-1){
+    currentIdx=-1;
     card.innerHTML=`<div class="big">🎉 全部课程学完！</div>
-      <div class="muted" style="margin:8px 0">三个阶段都过了一遍。去「🎧 听力」保持浸泡、去「💬 实战」保持开口，无障碍就稳了。</div>
+      <div class="muted" style="margin:8px 0">四个阶段（A2→B1→B2→C1）都过了一遍。去「🎧 听力」保持浸泡、去「💬 实战」保持开口，无障碍就稳了。也可以从「📑 课程目录」回看任意一课复习。</div>
       <button class="btn-ghost" id="restart">🔄 重置全部进度</button>`;
-    document.getElementById('restart').onclick=()=>{data.completed={};save();renderAll();};
+    document.getElementById('restart').onclick=()=>{data.completed={};currentIdx=0;save();renderAll();};
     return;
   }
+  currentIdx=idx;
   const L=LESSONS[idx];
   const allEn=L.dia.map(d=>d.e);
+  const prevDisabled=idx<=0?'disabled':'';
+  const nextDisabled=idx>=LESSONS.length-1?'disabled':'';
+  const doneTxt=data.completed[idx]?'✅ 已学完（点此跳到下一课）':'✅ 学完这节课（自动跳到下一课）';
   card.innerHTML=`
     <div class="row">
       <span class="tag ${sceneClass(L.scene)}">${sceneText(L.scene)}</span>
@@ -749,7 +1195,11 @@ function renderStudy(){
       <span class="muted">第 ${idx+1} 课 / 共 ${LESSONS.length} 课</span>
     </div>
     <div class="big">${L.title} ${spk(L.title)}</div>
-    <div style="margin:6px 0"><button class="btn-ghost btn-sm" id="playAll">🔊 朗读整课</button></div>
+    <div style="margin:6px 0;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-ghost btn-sm" id="playAll">🔊 朗读整课</button>
+      <button class="btn-ghost btn-sm" id="prevBtn" ${prevDisabled}>⬅️ 上一课</button>
+      <button class="btn-ghost btn-sm" id="nextBtn" ${nextDisabled}>下一课 ➡️</button>
+    </div>
     <div class="dialogue">${L.dia.map(d=>`
       <div class="line">
         <div class="who">${d.w}</div>
@@ -761,12 +1211,49 @@ function renderStudy(){
     <div class="tip">💡 ${L.tip}</div>
     <div class="task">✅ 今日任务：${L.task}</div>
     <div class="visa-word">🛂 签证词卡：<b>${L.visa.w}</b> — ${L.visa.m} ${spk(L.visa.w)}</div>
-    <button class="btn-done" id="doneBtn">✅ 学完这节课（自动跳到下一课）</button>`;
+    <button class="btn-done" id="doneBtn">${doneTxt}</button>`;
   document.getElementById('playAll').onclick=()=>speakSeq(allEn,document.getElementById('playAll'));
   document.getElementById('doneBtn').onclick=()=>markDone(idx);
+  document.getElementById('prevBtn').onclick=()=>renderStudy(idx-1);
+  document.getElementById('nextBtn').onclick=()=>renderStudy(idx+1);
   card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add)));
   card.querySelectorAll('[data-star]').forEach(el=>el.onclick=()=>toggleCollected(decodeURIComponent(el.dataset.star),decodeURIComponent(el.dataset.zh),decodeURIComponent(el.dataset.src),el));
 }
+
+/* ============ 课程目录（TOC） ============ */
+function renderToc(){
+  const list=document.getElementById('tocList');
+  const phases=[
+    {p:1,t:"阶段一 · A2 生存（日常生存）"},
+    {p:2,t:"阶段二 · B1 流畅（自如沟通）"},
+    {p:3,t:"阶段三 · B2 自在（深度表达）"},
+    {p:4,t:"阶段四 · C1 自如（无障碍沟通）"}
+  ];
+  let html="";
+  phases.forEach(g=>{
+    const items=LESSONS.map((l,i)=>({l,i})).filter(o=>o.l.phase===g.p);
+    if(!items.length)return;
+    html+=`<div class="toc-phase ${phaseClass(g.p)}">${g.t}</div>`;
+    html+=items.map(o=>`<div class="toc-item ${data.completed[o.i]?'done':''}" data-i="${o.i}">
+        <span class="toc-num">${o.i+1}</span>
+        <span class="tag ${sceneClass(o.l.scene)}">${sceneText(o.l.scene)}</span>
+        <span class="toc-title">${o.l.title}</span>
+        ${data.completed[o.i]?'<span style="margin-left:auto">✅</span>':''}
+      </div>`).join('');
+  });
+  list.innerHTML=html;
+  list.querySelectorAll('.toc-item').forEach(it=>it.onclick=()=>{
+    const i=+it.dataset.i;
+    closeToc();
+    renderStudy(i);
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+}
+function openToc(){renderToc();document.getElementById('tocModal').classList.add('on');}
+function closeToc(){document.getElementById('tocModal').classList.remove('on');}
+document.getElementById('tocBtn').onclick=openToc;
+document.getElementById('tocClose').onclick=closeToc;
+document.getElementById('tocModal').addEventListener('click',e=>{if(e.target.id==='tocModal')closeToc();});
 
 /* ============ 记错弹窗 ============ */
 let modalText="";
@@ -899,7 +1386,7 @@ document.getElementById('wImportFile').onchange=e=>{
 function renderListen(){
   const list=document.getElementById('listenList');
   if(!list)return;
-  const groups=[{p:1,t:"阶段一 A2 · 慢速起步"},{p:2,t:"阶段二 B1 · 实用口语"},{p:3,t:"阶段三 B2 · 真实语速"}];
+  const groups=[{p:1,t:"阶段一 A2 · 慢速起步"},{p:2,t:"阶段二 B1 · 实用口语"},{p:3,t:"阶段三 B2 · 真实语速"},{p:4,t:"阶段四 C1 · 无障碍沟通"}];
   list.innerHTML=groups.map(g=>{
     const items=LISTEN.filter(x=>x.phase===g.p);
     return `<div class="phase-head ${phaseClass(g.p)}">${g.t}</div>`+items.map(it=>`
@@ -946,7 +1433,7 @@ document.getElementById('nextPractice').onclick=()=>{
 /* ============ 进度 ============ */
 function renderProgress(){
   const list=document.getElementById('progressList');
-  const groups=[{p:1,t:"阶段一 A2 · 生存"},{p:2,t:"阶段二 B1 · 流畅"},{p:3,t:"阶段三 B2 · 自在"}];
+  const groups=[{p:1,t:"阶段一 A2 · 生存"},{p:2,t:"阶段二 B1 · 流畅"},{p:3,t:"阶段三 B2 · 自在"},{p:4,t:"阶段四 C1 · 自如"}];
   let html="";
   groups.forEach(g=>{
     const items=LESSONS.map((l,i)=>({l,i})).filter(o=>o.l.phase===g.p);
@@ -975,6 +1462,7 @@ function markDone(idx){
   const yest=new Date(Date.now()-86400000).toLocaleDateString('en-CA');
   data.streak=(data.lastCheck===yest)?(data.streak||0)+1:1;
   data.lastCheck=t;
+  currentIdx=nextLessonIdx(); // 自动前进到下一未完成课
   save();renderAll();
   window.scrollTo({top:0,behavior:'smooth'});
 }
@@ -1001,6 +1489,7 @@ function renderAll(){
   const c=completedCount();
   document.getElementById('progText').textContent=c+" / "+LESSONS.length;
   document.getElementById('progBar').style.width=(c/LESSONS.length*100)+"%";
+  const tt=document.getElementById('tocTotal');if(tt)tt.textContent=LESSONS.length;
   renderStudy();renderMistakes();renderWords();renderProgress();
 }
 renderAll();
