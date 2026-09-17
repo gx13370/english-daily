@@ -66,6 +66,7 @@
   .chk{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:inline-flex;align-items:center;justify-content:center;font-size:13px;color:#fff;cursor:pointer}
   .chk.on{background:var(--ok);border-color:var(--ok)}
   .mistake{background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;margin-bottom:9px}
+  .mzh{color:var(--sub);font-size:13px;margin-top:3px}
   .mistake .correct{font-weight:700;color:var(--ok)}
   .mistake .wrong{color:var(--danger);font-size:13px}
   .mistake .note{color:var(--sub);font-size:12.5px;margin-top:2px}
@@ -196,6 +197,8 @@
     <div style="margin-top:8px">
       <label style="font-size:12.5px;font-weight:700">正确表达（英文）</label>
       <input id="mCorrect" placeholder="例如：Could you pass me the cup, please?" />
+      <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">中文意思（可选）</label>
+      <input id="mZh" placeholder="例如：请把杯子递给我" />
       <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">我常错的写法 / 说法</label>
       <input id="mWrong" placeholder="例如：Can you give me cup?" />
       <label style="font-size:12.5px;font-weight:700;margin-top:8px;display:block">备注（可选）</label>
@@ -246,6 +249,8 @@
     <h3>📕 加入错题库</h3>
     <label>正确表达（英文）</label>
     <input id="mmCorrect" readonly />
+    <label>中文意思</label>
+    <input id="mmZh" readonly placeholder="（无）" />
     <label>我常错的写法 / 说法</label>
     <input id="mmWrong" placeholder="我刚才说/写错的样子…" />
     <label>备注（可选）</label>
@@ -1204,10 +1209,10 @@ function renderStudy(forceIdx){
       <div class="line">
         <div class="who">${d.w}</div>
         <div class="en"><div class="e">${d.e} ${spk(d.e)}</div><div class="z">${d.z}</div>
-          <span class="addm" data-add="${encodeURIComponent(d.e)}">记错</span></div>
+          <span class="addm" data-add="${encodeURIComponent(d.e)}" data-zh="${encodeURIComponent(d.z)}">记错</span></div>
       </div>`).join('')}</div>
     <div class="muted" style="margin-top:4px">📘 重点词汇</div>
-    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="star ${isCollected(v.w)?'on':''}" data-star="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}" data-src="${encodeURIComponent('第'+(idx+1)+'课 '+L.title)}">${isCollected(v.w)?'⭐':'☆'}</span><span class="addm" data-add="${encodeURIComponent(v.w)}">记错</span></span>`).join('')}</div>
+    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="star ${isCollected(v.w)?'on':''}" data-star="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}" data-src="${encodeURIComponent('第'+(idx+1)+'课 '+L.title)}">${isCollected(v.w)?'⭐':'☆'}</span><span class="addm" data-add="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}">记错</span></span>`).join('')}</div>
     <div class="tip">💡 ${L.tip}</div>
     <div class="task">✅ 今日任务：${L.task}</div>
     <div class="visa-word">🛂 签证词卡：<b>${L.visa.w}</b> — ${L.visa.m} ${spk(L.visa.w)}</div>
@@ -1216,7 +1221,7 @@ function renderStudy(forceIdx){
   document.getElementById('doneBtn').onclick=()=>markDone(idx);
   document.getElementById('prevBtn').onclick=()=>renderStudy(idx-1);
   document.getElementById('nextBtn').onclick=()=>renderStudy(idx+1);
-  card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add)));
+  card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add), el.dataset.zh?decodeURIComponent(el.dataset.zh):""));
   card.querySelectorAll('[data-star]').forEach(el=>el.onclick=()=>toggleCollected(decodeURIComponent(el.dataset.star),decodeURIComponent(el.dataset.zh),decodeURIComponent(el.dataset.src),el));
 }
 
@@ -1256,8 +1261,9 @@ document.getElementById('tocClose').onclick=closeToc;
 document.getElementById('tocModal').addEventListener('click',e=>{if(e.target.id==='tocModal')closeToc();});
 
 /* ============ 记错弹窗 ============ */
-let modalText="";
-function openModal(text){modalText=text;document.getElementById('mmCorrect').value=text;
+let modalText="",modalZh="";
+function openModal(text,zh){modalText=text;modalZh=zh||"";document.getElementById('mmCorrect').value=text;
+  const zEl=document.getElementById('mmZh');if(zEl)zEl.value=modalZh;
   document.getElementById('mmWrong').value="";document.getElementById('mmNote').value="";
   document.getElementById('mask').classList.add('on');document.getElementById('mmWrong').focus();}
 function closeModal(){document.getElementById('mask').classList.remove('on');}
@@ -1266,7 +1272,7 @@ document.getElementById('mmSave').onclick=()=>{
   const wrong=document.getElementById('mmWrong').value.trim();
   const note=document.getElementById('mmNote').value.trim();
   if(!wrong&&!note){closeModal();return;}
-  data.mistakes.unshift({id:Date.now(),correct:modalText,wrong:wrong,note:note,mastered:false});
+  data.mistakes.unshift({id:Date.now(),correct:modalText,zh:modalZh,wrong:wrong,note:note,mastered:false});
   save();closeModal();renderMistakes();renderAll();
 };
 
@@ -1280,6 +1286,7 @@ function renderMistakes(){
   list.innerHTML=data.mistakes.map(m=>`
     <div class="mistake">
       <div class="correct">✅ ${m.correct} <span class="spk" data-t="${encodeURIComponent(m.correct)}">🔊</span></div>
+      ${m.zh?`<div class="mzh">🔤 ${m.zh}</div>`:""}
       ${m.wrong?`<div class="wrong">❌ 我曾错写：${m.wrong}</div>`:""}
       ${m.note?`<div class="note">📝 ${m.note}</div>`:""}
       <div class="acts">
@@ -1294,12 +1301,13 @@ function renderMistakes(){
 }
 document.getElementById('addMistake').onclick=()=>{
   const c=document.getElementById('mCorrect').value.trim();
+  const z=document.getElementById('mZh').value.trim();
   const w=document.getElementById('mWrong').value.trim();
   const n=document.getElementById('mNote').value.trim();
   if(!c){alert('请填写正确表达');return;}
-  data.mistakes.unshift({id:Date.now(),correct:c,wrong:w,note:n,mastered:false});
+  data.mistakes.unshift({id:Date.now(),correct:c,zh:z,wrong:w,note:n,mastered:false});
   save();
-  document.getElementById('mCorrect').value="";document.getElementById('mWrong').value="";document.getElementById('mNote').value="";
+  document.getElementById('mCorrect').value="";document.getElementById('mZh').value="";document.getElementById('mWrong').value="";document.getElementById('mNote').value="";
   renderMistakes();renderAll();
 };
 document.getElementById('exportBtn').onclick=()=>{
