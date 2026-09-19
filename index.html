@@ -213,7 +213,7 @@
       <input id="mNote" placeholder="例如：pass 不是 give；加 please 更礼貌" />
       <button class="btn-done" style="margin-top:10px" id="addMistake">保存到错题库</button>
     </div>
-    <div class="disclaimer">💡 在学习页每句/每个词后面点「记错」可一键带入正确表达。</div>
+    <div class="disclaimer">💡 在学习页每句/每个词后面点「收藏」即可一键加入错题库（无需备注）。</div>
   </div>
   <div id="mistakeList"></div>
   <input type="file" id="importFile" accept="application/json" class="hidden" />
@@ -253,6 +253,16 @@
       </div>
     </div>
     <div class="disclaimer" style="margin-top:6px">💡 换手机 / 换浏览器 / 网页打不开进度时：先「备份进度」下载一个文件，到新地方点「恢复备份」选它即可续上，不会再重新开始。</div>
+    <div class="card" style="margin-top:10px">
+      <div class="row"><b>☁️ 多设备云同步</b><span id="syncStat" class="saveStat"></span></div>
+      <div class="muted" style="font-size:12.5px;margin:4px 0 8px">设一个「同步码」（任意字母数字，如 <b>my2026</b>）。在手机/别的浏览器打开本页，填<b>同一个同步码</b>，你的进度+错题库+单词本就自动一致，换设备不用重来。</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="syncCode" placeholder="输入同步码，如 my2026" style="flex:1;min-width:150px" />
+        <button class="btn-done btn-sm" id="syncOn">开启同步</button>
+        <button class="btn-ghost btn-sm" id="syncOff">停用</button>
+        <button class="btn-ghost btn-sm" id="syncNow">立即同步</button>
+      </div>
+    </div>
     <div id="progressList" style="margin-top:8px"></div>
     <input type="file" id="pImportFile" accept="application/json" class="hidden" />
   </div>
@@ -260,13 +270,13 @@
 
 <div class="mask" id="mask">
   <div class="modal">
-    <h3>📕 加入错题库</h3>
+    <h3>📕 补充错题库（可选）</h3>
     <label>正确表达（英文）</label>
     <input id="mmCorrect" readonly />
     <label>中文意思</label>
     <input id="mmZh" readonly placeholder="（无）" />
-    <label>我常错的写法 / 说法</label>
-    <input id="mmWrong" placeholder="我刚才说/写错的样子…" />
+    <label>我常错的写法 / 说法（可选）</label>
+    <input id="mmWrong" placeholder="我刚才说/写错的样子…（不填也行）" />
     <label>备注（可选）</label>
     <input id="mmNote" placeholder="为什么错 / 怎么记" />
     <div class="row2">
@@ -1140,7 +1150,9 @@ function load(){
 let saveOK=true;
 function flashSaved(){const el=document.getElementById('saveStat');if(!el)return;el.textContent='✅ 已保存';el.className='saveStat ok';clearTimeout(el._t);el._t=setTimeout(()=>{el.textContent='';el.className='saveStat';},1800);}
 function showSaveWarn(){const el=document.getElementById('saveStat');if(!el)return;el.textContent='⚠️ 无法保存进度（可能无痕/隐私模式），本次学习不会被记住';el.className='saveStat warn';}
-function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));saveOK=true;flashSaved();}catch(e){saveOK=false;showSaveWarn();}}
+let _pushT=null;
+function save(){try{localStorage.setItem(STORE_KEY,JSON.stringify(data));saveOK=true;flashSaved();}catch(e){saveOK=false;showSaveWarn();}
+  if(syncEnabled()){clearTimeout(_pushT);_pushT=setTimeout(pushSync,600);}}
 let data=load();
 if(!data.completed) data.completed={};
 if(!data.mistakes) data.mistakes=[];
@@ -1148,6 +1160,45 @@ if(!data.words) data.words=[];
 if(!data.streak) data.streak=0;
 if(!data.lastCheck) data.lastCheck="";
 if(data.lastIdx==null) data.lastIdx=-1;
+
+/* ============ 多设备云同步（Cloudflare Worker + KV） ============ */
+const SYNC_ENDPOINT=""; // 部署 Cloudflare Worker 后填入其 URL（如 https://english-sync.xxx.workers.dev）
+let syncCode="";
+function loadSync(){try{syncCode=localStorage.getItem('als_sync_code')||"";}catch(e){syncCode="";}}
+function saveSync(){try{if(syncCode)localStorage.setItem('als_sync_code',syncCode);else localStorage.removeItem('als_sync_code');}catch(e){}}
+function syncEnabled(){return !!SYNC_ENDPOINT && !!syncCode;}
+function setSyncStat(t,ok){const el=document.getElementById('syncStat');if(!el)return;el.textContent=t;el.className='saveStat '+(ok?'ok':'warn');}
+async function pushSync(){
+  if(!syncEnabled())return;
+  try{
+    const r=await fetch(SYNC_ENDPOINT+'?code='+encodeURIComponent(syncCode),{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify(data)});
+    if(r.ok)setSyncStat('☁️ 已同步 '+new Date().toLocaleTimeString('zh-CN'),true);
+    else setSyncStat('同步失败('+r.status+')',false);
+  }catch(e){setSyncStat('同步失败(网络)',false);}
+}
+function mergeSync(cloud){
+  if(!cloud||typeof cloud!=='object')return false;
+  let changed=false;
+  if(cloud.completed){for(const k in cloud.completed){if(cloud.completed[k]&&!data.completed[k]){data.completed[k]=true;changed=true;}}}
+  if(Array.isArray(cloud.mistakes)){const ids=new Set(data.mistakes.map(m=>m.id));cloud.mistakes.forEach(m=>{if(m&&m.id&&!ids.has(m.id)){data.mistakes.unshift(m);ids.add(m.id);changed=true;}});}
+  if(Array.isArray(cloud.words)){const ids=new Set(data.words.map(w=>w.id));cloud.words.forEach(w=>{if(w&&w.id&&!ids.has(w.id)){data.words.unshift(w);ids.add(w.id);changed=true;}});}
+  if(typeof cloud.lastIdx==='number'&&(data.lastIdx==null||cloud.lastIdx>data.lastIdx)){data.lastIdx=cloud.lastIdx;changed=true;}
+  if(cloud.streak)data.streak=cloud.streak;
+  if(cloud.lastCheck)data.lastCheck=cloud.lastCheck;
+  return changed;
+}
+async function pullSync(){
+  if(!syncEnabled())return false;
+  try{
+    const r=await fetch(SYNC_ENDPOINT+'?code='+encodeURIComponent(syncCode),{method:'GET'});
+    if(!r.ok){if(r.status!==404)setSyncStat('拉取失败('+r.status+')',false);return false;}
+    const cloud=await r.json();
+    const changed=mergeSync(cloud);
+    if(changed){save();renderAll();}
+    setSyncStat('☁️ 已同步 '+new Date().toLocaleTimeString('zh-CN'),true);
+    return true;
+  }catch(e){setSyncStat('拉取失败(网络)',false);return false;}
+}
 
 /* ============ 语音 ============ */
 let voice=null, speakingEl=null;
@@ -1236,10 +1287,10 @@ function renderStudy(forceIdx){
       <div class="line">
         <div class="who">${d.w}</div>
         <div class="en"><div class="e">${d.e} ${spk(d.e)}</div><div class="z">${d.z}</div>
-          <span class="addm" data-add="${encodeURIComponent(d.e)}" data-zh="${encodeURIComponent(d.z)}">记错</span></div>
+          <span class="addm" data-add="${encodeURIComponent(d.e)}" data-zh="${encodeURIComponent(d.z)}">收藏</span></div>
       </div>`).join('')}</div>
     <div class="muted" style="margin-top:4px">📘 重点词汇</div>
-    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="star ${isCollected(v.w)?'on':''}" data-star="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}" data-src="${encodeURIComponent('第'+(idx+1)+'课 '+L.title)}">${isCollected(v.w)?'⭐':'☆'}</span><span class="addm" data-add="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}">记错</span></span>`).join('')}</div>
+    <div class="vocab">${L.voc.map(v=>`<span class="v"><b>${v.w}</b> ${v.m} ${spk(v.w)}<span class="star ${isCollected(v.w)?'on':''}" data-star="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}" data-src="${encodeURIComponent('第'+(idx+1)+'课 '+L.title)}">${isCollected(v.w)?'⭐':'☆'}</span><span class="addm" data-add="${encodeURIComponent(v.w)}" data-zh="${encodeURIComponent(v.m)}">收藏</span></span>`).join('')}</div>
     <div class="tip">💡 ${L.tip}</div>
     <div class="task">✅ 今日任务：${L.task}</div>
     <div class="visa-word">🛂 签证词卡：<b>${L.visa.w}</b> — ${L.visa.m} ${spk(L.visa.w)}</div>
@@ -1248,7 +1299,7 @@ function renderStudy(forceIdx){
   document.getElementById('doneBtn').onclick=()=>markDone(idx);
   document.getElementById('prevBtn').onclick=()=>renderStudy(idx-1);
   document.getElementById('nextBtn').onclick=()=>renderStudy(idx+1);
-  card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>openModal(decodeURIComponent(el.dataset.add), el.dataset.zh?decodeURIComponent(el.dataset.zh):""));
+  card.querySelectorAll('.addm').forEach(el=>el.onclick=()=>quickMistake(decodeURIComponent(el.dataset.add), el.dataset.zh?decodeURIComponent(el.dataset.zh):""));
   card.querySelectorAll('[data-star]').forEach(el=>el.onclick=()=>toggleCollected(decodeURIComponent(el.dataset.star),decodeURIComponent(el.dataset.zh),decodeURIComponent(el.dataset.src),el));
 }
 
@@ -1300,12 +1351,22 @@ function openModal(text,zh){modalText=text;modalZh=zh||"";document.getElementByI
   document.getElementById('mask').classList.add('on');document.getElementById('mmWrong').focus();}
 function closeModal(){document.getElementById('mask').classList.remove('on');}
 document.getElementById('mmCancel').onclick=closeModal;
+function upsertMistake(correct,zh,wrong,note){
+  const ex=data.mistakes.find(m=>m.correct===correct);
+  if(ex){ if(wrong)ex.wrong=wrong; if(note)ex.note=note; if(zh)ex.zh=zh; }
+  else data.mistakes.unshift({id:Date.now(),correct:correct,zh:zh,wrong:wrong,note:note,mastered:false});
+}
+function quickMistake(text,zh){
+  upsertMistake(text,zh,"","");
+  save();renderMistakes();renderAll();
+  toast('✅ 已收藏到错题库');
+}
 document.getElementById('mmSave').onclick=()=>{
   const wrong=document.getElementById('mmWrong').value.trim();
   const note=document.getElementById('mmNote').value.trim();
-  if(!wrong&&!note){closeModal();return;}
-  data.mistakes.unshift({id:Date.now(),correct:modalText,zh:modalZh,wrong:wrong,note:note,mastered:false});
+  upsertMistake(modalText,modalZh,wrong,note);
   save();closeModal();renderMistakes();renderAll();
+  toast('已保存到错题库');
 };
 
 /* ============ 错题库 ============ */
@@ -1313,7 +1374,7 @@ function renderMistakes(){
   const list=document.getElementById('mistakeList');
   document.getElementById('mCount').textContent=data.mistakes.length?`(${data.mistakes.length})`:"";
   if(!data.mistakes.length){
-    list.innerHTML=`<div class="card muted">还没有错题。在学习页点句子或单词后的「记错」即可加入。</div>`;return;
+    list.innerHTML=`<div class="card muted">还没有错题。在学习页点句子或单词后的「收藏」即可加入（无需备注）。</div>`;return;
   }
   list.innerHTML=data.mistakes.map(m=>`
     <div class="mistake">
@@ -1323,6 +1384,7 @@ function renderMistakes(){
       ${m.note?`<div class="note">📝 ${m.note}</div>`:""}
       <div class="acts">
         <button class="btn-ghost btn-sm" data-play="${encodeURIComponent(m.correct)}">🔊 朗读</button>
+        <button class="btn-ghost btn-sm" data-edit="${m.id}">✏️ 补充我常错</button>
         ${m.mastered?'<span class="done-badge">已掌握 ✓</span>':'<button class="btn-ghost btn-sm" data-master="'+m.id+'">标记掌握</button>'}
         <button class="btn-danger btn-sm" data-del="${m.id}">删除</button>
       </div>
@@ -1330,6 +1392,7 @@ function renderMistakes(){
   list.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>speak(decodeURIComponent(b.dataset.play),b));
   list.querySelectorAll('[data-master]').forEach(b=>b.onclick=()=>{const id=+b.dataset.master;const m=data.mistakes.find(x=>x.id===id);if(m)m.mastered=true;save();renderMistakes();});
   list.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const id=+b.dataset.del;data.mistakes=data.mistakes.filter(x=>x.id!==id);save();renderMistakes();renderAll();});
+  list.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>{const id=+b.dataset.edit;const m=data.mistakes.find(x=>x.id===id);if(m)openModal(m.correct,m.zh||"");});
 }
 document.getElementById('addMistake').onclick=()=>{
   const c=document.getElementById('mCorrect').value.trim();
@@ -1456,12 +1519,12 @@ function renderPractice(){
       <div class="acts">
         <button class="btn-ghost btn-sm" id="revealP">👀 看参考答案</button>
         <button class="btn-ghost btn-sm" data-play="${encodeURIComponent(p.a)}">🔊 朗读答案</button>
-        <button class="btn-ghost btn-sm" id="noteP">📕 记错</button>
+        <button class="btn-ghost btn-sm" id="noteP">📕 收藏</button>
       </div>
     </div>
     <div class="muted" style="margin-top:6px">提示：先大声用英语答（中英混也行），再点「看参考答案」对照。卡住的表达记进错题库。</div>`;
   document.getElementById('revealP').onclick=()=>{document.getElementById('pAns').classList.remove('hidden');};
-  document.getElementById('noteP').onclick=()=>openModal(p.a);
+  document.getElementById('noteP').onclick=()=>quickMistake(p.a,"");
   box.querySelectorAll('[data-play]').forEach(b=>b.onclick=()=>speak(decodeURIComponent(b.dataset.play),b));
 }
 document.getElementById('nextPractice').onclick=()=>{
@@ -1520,6 +1583,24 @@ document.getElementById('pImportFile').onchange=e=>{
   }catch(err){alert('文件格式错误');}};
   r.readAsText(f);e.target.value='';
 };
+
+/* ============ 云同步绑定 ============ */
+loadSync();
+(function(){
+  const sc=document.getElementById('syncCode');
+  if(sc&&syncCode)sc.value=syncCode;
+  document.getElementById('syncOn').onclick=async()=>{
+    const v=(document.getElementById('syncCode').value||'').trim();
+    if(!v){alert('请输入同步码');return;}
+    if(!SYNC_ENDPOINT){alert('云端尚未开通，请稍候或联系部署');return;}
+    syncCode=v;saveSync();
+    setSyncStat('同步中…',true);
+    await pullSync(); await pushSync(); renderAll();
+  };
+  document.getElementById('syncOff').onclick=()=>{syncCode="";saveSync();setSyncStat('已停用云同步',false);};
+  document.getElementById('syncNow').onclick=()=>{if(!syncEnabled()){alert('请先填写同步码并点「开启同步」');return;}pullSync().then(pushSync);};
+  if(syncCode&&SYNC_ENDPOINT) pullSync();
+})();
 
 /* ============ 完成一课 ============ */
 function markDone(idx){
